@@ -55,15 +55,6 @@ function run_tests_without_coverage() {
   echo "CICO: ran tests without coverage"
 }
 
-function check_postgres_healthiness(){
-  echo "CICO: Waiting for postgresql container to be healthy...";
-  while ! docker ps | grep postgres_integration_test | grep -q healthy; do
-    printf .;
-    sleep 1 ;
-  done;
-  echo "CICO: postgresql container is HEALTHY!";
-}
-
 function tag_push() {
   local tag
   local registry 
@@ -115,7 +106,7 @@ function deploy() {
 }
 
 function cico_setup() {
-  #load_jenkins_vars;
-  #install_deps;
+  load_jenkins_vars;
+  install_deps;
   prepare;
 }
