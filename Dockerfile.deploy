@@ -1,0 +1,31 @@
+FROM centos:7
+LABEL maintainer "Devtools <devtools@redhat.com>"
+LABEL author "Konrad Kleine <kkleine@redhat.com>"
+ENV LANG=en_US.utf8
+ENV BUILD_TOOL_DETECTOR_PREFIX=/usr/local/build-tool-detector
+
+# Create a non-root user and a group with the name: "build-tool-detector"
+ENV BUILD_TOOL_DETECTOR_USERNAME=build-tool-detector
+RUN useradd --no-create-home -s /bin/bash ${BUILD_TOOL_DETECTOR_USERNAME}
+
+COPY bin/build-tool-detector ${BUILD_TOOL_DETECTOR_PREFIX}/bin/build-tool-detector
+#COPY config.yaml ${BUILD_TOOL_DETECTOR_PREFIX}/etc/config.yaml
+
+# Install little pcp pmcd server for metrics collection
+# would prefer only pmcd, and not the /bin/pm*tools etc.
+COPY pcp.repo /etc/yum.repos.d/pcp.repo
+RUN yum install -y pcp pcp-pmda-prometheus && yum clean all && \
+    mkdir -p /etc/pcp /var/run/pcp /var/lib/pcp /var/log/pcp  && \
+    chgrp -R root /etc/pcp /var/run/pcp /var/lib/pcp /var/log/pcp && \
+    chmod -R g+rwX /etc/pcp /var/run/pcp /var/lib/pcp /var/log/pcp
+COPY ./build-tool-detector+pmcd.sh /build-tool-detector+pmcd.sh
+EXPOSE 44321
+
+
+# From here onwards, any RUN, CMD, or ENTRYPOINT will be run under the following user
+USER ${BUILD_TOOL_DETECTOR_USERNAME}
+
+WORKDIR ${BUILD_TOOL_DETECTOR_PREFIX}
+ENTRYPOINT [ "/build-tool-detector+pmcd.sh" ]
+
+EXPOSE 8089
