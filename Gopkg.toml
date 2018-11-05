@@ -36,7 +36,8 @@ required = [
     "github.com/goadesign/goa/goagen/utils",
     "github.com/goadesign/goa/goatest",
     "github.com/google/go-github/github",
-    "github.com/fabric8-services/fabric8-common/token"
+    "github.com/fabric8-services/fabric8-common/token",
+    "github.com/onsi/ginkgo/ginkgo",
 ]
 
 [prune]
@@ -68,8 +69,12 @@ required = [
   version = "0.4.6"
 
 [[constraint]]
+  name = "github.com/prometheus/client_golang"
+  revision = "da11cf2c83c7414b76736025847c1cbdbb41e11e"
+
+[[constraint]]
   name = "github.com/fabric8-services/fabric8-common"
-  revision = "master"
+  revision = "45960af9689499e9f5e5a4ebd142a8189a19ca1e"
   
 # Apply workaround from https://github.com/golang/dep/issues/1799
 [[override]]

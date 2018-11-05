@@ -9,6 +9,7 @@ SOURCES := $(shell find $(SOURCE_DIR) -path $(SOURCE_DIR)/vendor -prune -o -name
 DESIGN_DIR=design
 DESIGNS := $(shell find $(SOURCE_DIR)/$(DESIGN_DIR) -path $(SOURCE_DIR)/vendor -prune -o -name '*.go' -print)
 
+include ./.make/docker.mk
 ifeq ($(OS),Windows_NT)
 include ./.make/Makefile.win
 else
@@ -65,25 +66,20 @@ $(INSTALL_PREFIX):
 $(TMP_PATH):
 	mkdir -p $(TMP_PATH)
 
-.PHONY: prebuild-check
-prebuild-check: $(TMP_PATH) $(INSTALL_PREFIX) 
-# Check that all tools where found
-ifndef GIT_BIN
-	$(error The "$(GIT_BIN_NAME)" executable could not be found in your PATH)
-endif
-ifndef DEP_BIN
-	$(error The "$(DEP_BIN_NAME)" executable could not be found in your PATH)
-endif
-ifndef GO_BIN
-	$(error The "$(GO_BIN_NAME)" executable could not be found in your PATH)
-endif
-
 # -------------------------------------------------------------------
 # deps
 # -------------------------------------------------------------------
 $(DEP_BIN_DIR):
 	mkdir -p $(DEP_BIN_DIR)
 
+
+.PHONY: test-deps
+test-deps: $(GINKGO_BIN)
+
+# install ginkgo cli
+$(GINKGO_BIN):
+	cd $(VENDOR_DIR)/github.com/onsi/ginkgo/ginkgo && go build -v
+	@chmod +x $(GINKGO_BIN)
 
 
 .PHONY: deps 
@@ -180,12 +176,57 @@ generate: prebuild-check $(DESIGNS) $(GOAGEN_BIN) $(VENDOR_DIR) ## Generate GOA 
 	
 
 .PHONY: test 
-test: build  ## Executes all tests
-	@ginkgo -r
+test: test-deps  ## Executes all tests
+	$(GINKGO_BIN) -r
 
 .PHONY: format ## Removes unneeded imports and formats source code
-format:
+format: 
 	@goimports -l -w $(shell find . -type f -name '*.go' -not -path "./vendor/*")
+
+GOFORMAT_FILES := $(shell find  . -name '*.go' | grep -vEf .gofmt_exclude)
+
+.PHONY: show-info
+show-info:
+	$(call log-info,"$(shell go version)")
+	$(call log-info,"$(shell go env)")
+
+.PHONY: prebuild-check
+prebuild-check: $(TMP_PATH) $(INSTALL_PREFIX) $(CHECK_GOPATH_BIN) show-info
+# Check that all tools where found
+ifndef GIT_BIN
+	$(error The "$(GIT_BIN_NAME)" executable could not be found in your PATH)
+endif
+ifndef DEP_BIN
+	$(error The "$(DEP_BIN_NAME)" executable could not be found in your PATH)
+endif
+	@$(CHECK_GOPATH_BIN) -packageName=$(PACKAGE_NAME) || (echo "Project lives in wrong location"; exit 1)
+
+$(CHECK_GOPATH_BIN): .make/check_gopath.go
+ifndef GO_BIN
+	$(error The "$(GO_BIN_NAME)" executable could not be found in your PATH)
+endif
+ifeq ($(OS),Windows_NT)
+	@go build -o "$(shell cygpath --windows '$(CHECK_GOPATH_BIN)')" .make/check_gopath.go
+else
+	@go build -o $(CHECK_GOPATH_BIN) .make/check_gopath.go
+endif
+
+.PHONY: check-go-format
+## Exists with an error if there are files whose formatting differs from gofmt's
+check-go-format: prebuild-check
+	@gofmt -s -l ${GOFORMAT_FILES} 2>&1 \
+		| tee /tmp/gofmt-errors \
+		| read \
+	&& echo "ERROR: These files differ from gofmt's style (run 'make format-go-code' to fix this):" \
+	&& cat /tmp/gofmt-errors \
+	&& exit 1 \
+	|| true
+
+.PHONY: format-go-code
+## Formats any go file that differs from gofmt's style
+format-go-code: prebuild-check
+	@gofmt -s -l -w ${GOFORMAT_FILES}
+
 
 .PHONY: check
 check: ## Concurrently runs a whole bunch of static analysis tools
@@ -198,7 +239,7 @@ run: build ## runs the service locally
 .PHONY: tools
 tools: ## Installs all necessary tools
 	@echo "Installing gometalinter"
-	@go get -u github.com/alecthomas/gometalinter && gometalinter --install
+	@go get -u github.com/alecthomas/gometalinter 
 
 	@echo "Installing ginkgo"
 	@go get -u github.com/onsi/ginkgo/ginkgo
@@ -210,4 +251,4 @@ tools: ## Installs all necessary tools
 	@go get -u golang.org/x/tools/cmd/goimports
 
 	@echo "Installing goa"
-	@go get -u github.com/goadesign/goa/...
+	@go get -u github.com/goadesign/goa
