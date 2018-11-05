@@ -5,6 +5,8 @@ package main
 import (
 	"strconv"
 
+	"net/http"
+
 	"github.com/fabric8-services/build-tool-detector/app"
 	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/controllers"
@@ -17,7 +19,6 @@ import (
 	"github.com/goadesign/goa/middleware/security/jwt"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
-	"net/http"
 )
 
 const (
