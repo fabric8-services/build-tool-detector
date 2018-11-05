@@ -10,30 +10,31 @@ package controllers_test
 import (
 	"io/ioutil"
 
+	"github.com/fabric8-services/build-tool-detector/app/test"
+	"github.com/fabric8-services/build-tool-detector/config"
+	controllers "github.com/fabric8-services/build-tool-detector/controllers"
 	"github.com/goadesign/goa"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/spf13/viper"
-	"github.com/fabric8-services/build-tool-detector/app/test"
-	"github.com/fabric8-services/build-tool-detector/config"
-	controllers "github.com/fabric8-services/build-tool-detector/controllers"
 	"gopkg.in/h2non/gock.v1"
 )
 
 var _ = Describe("BuildToolDetector", func() {
-	var configuration config.Configuration
 
-	BeforeSuite(func() {
-		viper.SetConfigName("config")
-		viper.AddConfigPath("../")
-		viper.ReadInConfig()
-		viper.Unmarshal(&configuration)
-
-	})
 	Context("Internal Server Error", func() {
 		var service *goa.Service
+		var configuration config.Configuration
+
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
+
+			viper.SetConfigName("config-template")
+			viper.AddConfigPath("../")
+			viper.ReadInConfig()
+			viper.Unmarshal(&configuration)
+			configuration.Github.ClientID = "test"
+			configuration.Github.ClientSecret = "test"
 		})
 		AfterEach(func() {
 			gock.Off()
@@ -94,8 +95,17 @@ var _ = Describe("BuildToolDetector", func() {
 
 	Context("Okay", func() {
 		var service *goa.Service
+		var configuration config.Configuration
+
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
+
+			viper.SetConfigName("config-template")
+			viper.AddConfigPath("../")
+			viper.ReadInConfig()
+			viper.Unmarshal(&configuration)
+			configuration.Github.ClientID = "test"
+			configuration.Github.ClientSecret = "test"
 		})
 		AfterEach(func() {
 			gock.Off()
