@@ -22,6 +22,43 @@ import (
 
 var _ = Describe("BuildToolDetector", func() {
 
+	Context("Configuration", func() {
+		var service *goa.Service
+
+		BeforeEach(func() {
+			service = goa.New("build-tool-detector")
+		})
+		AfterEach(func() {
+			gock.Off()
+		})
+
+		It("Configuration incorrect - No github_client_id / github_client_secret", func() {
+			var configuration config.Configuration
+			viper.SetConfigName("config-template")
+			viper.AddConfigPath("../")
+			viper.ReadInConfig()
+			viper.Unmarshal(&configuration)
+			configuration.Github.ClientID = ""
+			configuration.Github.ClientSecret = ""
+
+			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_branch.json")
+			Expect(err).Should(BeNil())
+
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-launcher/launcher-backend/branches/master").
+				Reply(404).
+				BodyString(string(bodyString))
+
+			bodyString, err = ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_repo_branch.json")
+			Expect(err).Should(BeNil())
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-launcher/launcher-backend/contents/pom.xml").
+				Reply(404).
+				BodyString(string(bodyString))
+			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
+		})
+	})
+
 	Context("Internal Server Error", func() {
 		var service *goa.Service
 		var configuration config.Configuration
