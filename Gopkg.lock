@@ -11,7 +11,7 @@
   branch = "master"
   name = "github.com/armon/go-metrics"
   packages = ["."]
-  revision = "3c58d8115a78a6879e5df75ae900846768d36895"
+  revision = "f0300d1749da6fa982027e449ec0c7a145510c3c"
 
 [[projects]]
   name = "github.com/certifi/gocertifi"
@@ -52,7 +52,8 @@
     "httpsupport",
     "log",
     "token",
-    "token/jwk"
+    "token/jwk",
+    "token/tokencontext"
   ]
   revision = "master"
 
@@ -63,10 +64,10 @@
   version = "v1.4.7"
 
 [[projects]]
-  branch = "master"
   name = "github.com/getsentry/raven-go"
   packages = ["."]
-  revision = "084a9de9eb0361fbd5ded14b55c84e5493a5d7f6"
+  revision = "3033899c76deb3fb6570d9c4074d00443aeab88f"
+  version = "v0.1.0"
 
 [[projects]]
   name = "github.com/goadesign/goa"
@@ -100,14 +101,14 @@
 [[projects]]
   name = "github.com/google/go-github"
   packages = ["github"]
-  revision = "c3e9de61cf0678e682ea2b98cf1301ae3a814bc8"
-  version = "v18.1.0"
+  revision = "f55b50f38167644bb7e4be03d9a2bde71d435239"
+  version = "v18.2.0"
 
 [[projects]]
-  branch = "master"
   name = "github.com/google/go-querystring"
   packages = ["query"]
-  revision = "53e6ce116135b80d037921a7fdd5138cf32d7a8a"
+  revision = "44c6ddd0a2342c386950e880b658017258da92fc"
+  version = "v1.0.0"
 
 [[projects]]
   name = "github.com/hashicorp/go-immutable-radix"
@@ -254,8 +255,8 @@
 [[projects]]
   name = "github.com/spf13/cast"
   packages = ["."]
-  revision = "8965335b8c7107321228e3e3702cab9832751bac"
-  version = "v1.2.0"
+  revision = "8c9545af88b134710ab1cd196795e7f2388358d7"
+  version = "v1.3.0"
 
 [[projects]]
   name = "github.com/spf13/cobra"
@@ -272,8 +273,8 @@
 [[projects]]
   name = "github.com/spf13/pflag"
   packages = ["."]
-  revision = "9a97c102cda95a86cec2345a6f09f55a939babf5"
-  version = "v1.0.2"
+  revision = "298182f68c66c05229eb03ac171abe6e309ee79a"
+  version = "v1.0.3"
 
 [[projects]]
   name = "github.com/spf13/viper"
@@ -295,7 +296,7 @@
     "ed25519/internal/edwards25519",
     "pbkdf2"
   ]
-  revision = "0e37d006457bf46f9e6692014ba72ef82c33022c"
+  revision = "4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06"
 
 [[projects]]
   branch = "master"
@@ -306,13 +307,13 @@
     "html/charset",
     "websocket"
   ]
-  revision = "26e67e76b6c3f6ce91f7c52def5af501b4e0f3a2"
+  revision = "c10e9556a7bc0e7c942242b606f0acf024ad5d6a"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "d0be0721c37eeb5299f245a996a483160fc36940"
+  revision = "9b800f95dbbc54abff0acf7ee32d88ba4e328c89"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -345,7 +346,7 @@
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "677d2ff680c188ddb7dcd2bfa6bc7d3f2f2f75b2"
+  revision = "96e9e165b75e735822645eff82850b08c377be36"
 
 [[projects]]
   name = "gopkg.in/fsnotify.v1"
@@ -357,8 +358,8 @@
 [[projects]]
   name = "gopkg.in/h2non/gock.v1"
   packages = ["."]
-  revision = "db9916111f9d238f7fe98f34dfde20f11142475b"
-  version = "v1.0.10"
+  revision = "150f03e9bc914db1ba8c2a91c8985d4f21dd6005"
+  version = "v1.0.11"
 
 [[projects]]
   name = "gopkg.in/square/go-jose.v2"

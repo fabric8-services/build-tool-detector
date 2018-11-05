@@ -36,6 +36,7 @@ required = [
     "github.com/goadesign/goa/goagen/utils",
     "github.com/goadesign/goa/goatest",
     "github.com/google/go-github/github",
+    "github.com/fabric8-services/fabric8-common/token"
 ]
 
 [prune]
