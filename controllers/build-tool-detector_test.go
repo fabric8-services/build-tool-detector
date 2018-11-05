@@ -24,22 +24,23 @@ var _ = Describe("BuildToolDetector", func() {
 
 	Context("Configuration", func() {
 		var service *goa.Service
+		var configuration config.Configuration
 
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
-		})
-		AfterEach(func() {
-			gock.Off()
-		})
 
-		It("Configuration incorrect - No github_client_id / github_client_secret", func() {
-			var configuration config.Configuration
 			viper.SetConfigName("config-template")
 			viper.AddConfigPath("../")
 			viper.ReadInConfig()
 			viper.Unmarshal(&configuration)
 			configuration.Github.ClientID = ""
 			configuration.Github.ClientSecret = ""
+		})
+		AfterEach(func() {
+			gock.Off()
+		})
+
+		It("Configuration incorrect - No github_client_id / github_client_secret", func() {
 
 			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_branch.json")
 			Expect(err).Should(BeNil())
