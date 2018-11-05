@@ -41,7 +41,6 @@ var _ = Describe("BuildToolDetector", func() {
 		})
 
 		It("Configuration incorrect - No github_client_id / github_client_secret", func() {
-
 			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_branch.json")
 			Expect(err).Should(BeNil())
 

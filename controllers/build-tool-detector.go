@@ -13,7 +13,6 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/goadesign/goa"
 	"github.com/fabric8-services/build-tool-detector/app"
 	"github.com/fabric8-services/build-tool-detector/config"
 	errs "github.com/fabric8-services/build-tool-detector/controllers/error"
@@ -21,6 +20,7 @@ import (
 	"github.com/fabric8-services/build-tool-detector/domain/repository/github"
 	"github.com/fabric8-services/build-tool-detector/domain/types"
 	"github.com/fabric8-services/build-tool-detector/log"
+	"github.com/goadesign/goa"
 )
 
 var (
