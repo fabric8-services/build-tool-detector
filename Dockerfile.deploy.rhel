@@ -1,0 +1,22 @@
+FROM quay.io/openshiftio/rhel-base-pcp:latest
+
+ENV LANG=en_US.utf8
+ENV BUILD_TOOL_DETECTOR_PREFIX=/usr/local/build-tool-detector
+
+# Create a non-root user and a group with the name: "build-tool-detector"
+ENV BUILD_TOOL_DETECTOR_USERNAME=build-tool-detector
+RUN useradd --no-create-home -s /bin/bash ${BUILD_TOOL_DETECTOR_USERNAME}
+
+COPY bin/build-tool-detector ${BUILD_TOOL_DETECTOR_PREFIX}/bin/build-tool-detector
+#COPY config.yaml ${BUILD_TOOL_DETECTOR_PREFIX}/etc/config.yaml
+
+COPY ./build-tool-detector+pmcd.sh /build-tool-detector+pmcd.sh
+EXPOSE 44321
+
+# From here onwards, any RUN, CMD, or ENTRYPOINT will be run under the following user
+USER ${BUILD_TOOL_DETECTOR_USERNAME}
+
+WORKDIR ${BUILD_TOOL_DETECTOR_PREFIX}
+ENTRYPOINT [ "/build-tool-detector+pmcd.sh" ]
+
+EXPOSE 8089
