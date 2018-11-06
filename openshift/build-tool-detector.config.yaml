@@ -1,0 +1,22 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: build-tool-detector
+objects:
+- apiVersion: v1
+  kind: Secret
+  metadata:
+    name: build-tool-detector
+  type: Opaque
+  data:
+    github.client.id: ZGI=
+    github.client.secret: NTQzMg==
+    sentry.dsn: cG9zdGdyZXM=
+- apiVersion: v1
+  kind: ConfigMap
+  metadata:
+    name: build-tool-detector
+  type: Opaque
+  data:
+    auth.uri: http://auth:8089
+  

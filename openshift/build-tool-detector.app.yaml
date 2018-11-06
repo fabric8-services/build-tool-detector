@@ -1,0 +1,121 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: build-tool-detector
+objects:
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    labels:
+      service: build-tool-detector
+    name: build-tool-detector
+  spec:
+    replicas: ${{REPLICAS}}
+    selector:
+      service: build-tool-detector
+    strategy:
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          service: build-tool-detector
+      spec:
+        containers:
+        - image: ${IMAGE}:${IMAGE_TAG}
+          env:
+          - name: BUILD_TOOL_DETECTOR_GITHUB_CLIENT_ID
+            valueFrom:
+              secretKeyRef:
+                name: build-tool-detector
+                key: github.client.id
+          - name: BUILD_TOOL_DETECTOR_GITHUB_CLIENT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: build-tool-detector
+                key: github.client.secret
+          - name: BUILD_TOOL_DETECTOR_SENTRY_DSN
+            valueFrom:
+              secretKeyRef:
+                name: build-tool-detector
+                key: github.sentry.dsn
+          - name: BUILD_TOOL_DETECTOR_AUTH_URI
+            valueFrom:
+              configMapKeyRef:
+                name: build-tool-detector
+                key: auth.uri
+          imagePullPolicy: Always
+          name: build-tool-detector
+          ports:
+          - containerPort: 8099
+            protocol: TCP
+          livenessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/status
+              port: 8099
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /api/status
+              port: 8099
+              scheme: HTTP
+            initialDelaySeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            timeoutSeconds: 1
+          resources:
+            requests:
+              cpu: 0.1m
+              memory: 10Mi
+            limits:
+              cpu: 400m
+              memory: 1.5Gi
+          terminationMessagePath: /dev/termination-log
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+  status:
+    details:
+      causes:
+      - type: ConfigChange
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: build-tool-detector
+    labels:
+      service: build-tool-detector
+  spec:
+    ports:
+      - name: "8099"
+        protocol: TCP
+        port: 80
+        targetPort: 8099
+    selector:
+      service: build-tool-detector
+    type: ClusterIP
+    sessionAffinity: null
+parameters:
+- name: IMAGE
+  value: quay.io/openshiftio/rhel-fabric8-services-build-tool-detector
+- name: IMAGE_TAG
+  value: latest
+- description: Number of deployment replicas
+  displayName: Number of deployment replicas
+  required: true
+  name: REPLICAS
+  value: '1'
