@@ -7,12 +7,12 @@ within the git package.
 package repository_test
 
 import (
-	. "github.com/onsi/ginkgo"
-	. "github.com/onsi/gomega"
-	"github.com/spf13/viper"
 	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/domain/repository"
 	"github.com/fabric8-services/build-tool-detector/domain/repository/github"
+	. "github.com/onsi/ginkgo"
+	. "github.com/onsi/gomega"
+	"github.com/spf13/viper"
 )
 
 var _ = Describe("GitServiceType", func() {

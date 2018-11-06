@@ -10,30 +10,68 @@ package controllers_test
 import (
 	"io/ioutil"
 
+	"github.com/fabric8-services/build-tool-detector/app/test"
+	"github.com/fabric8-services/build-tool-detector/config"
+	controllers "github.com/fabric8-services/build-tool-detector/controllers"
 	"github.com/goadesign/goa"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/spf13/viper"
-	"github.com/fabric8-services/build-tool-detector/app/test"
-	"github.com/fabric8-services/build-tool-detector/config"
-	controllers "github.com/fabric8-services/build-tool-detector/controllers"
 	"gopkg.in/h2non/gock.v1"
 )
 
 var _ = Describe("BuildToolDetector", func() {
-	var configuration config.Configuration
 
-	BeforeSuite(func() {
-		viper.SetConfigName("config")
-		viper.AddConfigPath("../")
-		viper.ReadInConfig()
-		viper.Unmarshal(&configuration)
-
-	})
-	Context("Internal Server Error", func() {
+	Context("Configuration", func() {
 		var service *goa.Service
+		var configuration config.Configuration
+
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
+
+			viper.SetConfigName("config-template")
+			viper.AddConfigPath("../")
+			viper.ReadInConfig()
+			viper.Unmarshal(&configuration)
+			configuration.Github.ClientID = ""
+			configuration.Github.ClientSecret = ""
+		})
+		AfterEach(func() {
+			gock.Off()
+		})
+
+		It("Configuration incorrect - No github_client_id / github_client_secret", func() {
+			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_branch.json")
+			Expect(err).Should(BeNil())
+
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-launcher/launcher-backend/branches/master").
+				Reply(404).
+				BodyString(string(bodyString))
+
+			bodyString, err = ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_repo_branch.json")
+			Expect(err).Should(BeNil())
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-launcher/launcher-backend/contents/pom.xml").
+				Reply(404).
+				BodyString(string(bodyString))
+			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
+		})
+	})
+
+	Context("Internal Server Error", func() {
+		var service *goa.Service
+		var configuration config.Configuration
+
+		BeforeEach(func() {
+			service = goa.New("build-tool-detector")
+
+			viper.SetConfigName("config-template")
+			viper.AddConfigPath("../")
+			viper.ReadInConfig()
+			viper.Unmarshal(&configuration)
+			configuration.Github.ClientID = "test"
+			configuration.Github.ClientSecret = "test"
 		})
 		AfterEach(func() {
 			gock.Off()
@@ -94,8 +132,17 @@ var _ = Describe("BuildToolDetector", func() {
 
 	Context("Okay", func() {
 		var service *goa.Service
+		var configuration config.Configuration
+
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
+
+			viper.SetConfigName("config-template")
+			viper.AddConfigPath("../")
+			viper.ReadInConfig()
+			viper.Unmarshal(&configuration)
+			configuration.Github.ClientID = "test"
+			configuration.Github.ClientSecret = "test"
 		})
 		AfterEach(func() {
 			gock.Off()
@@ -176,6 +223,25 @@ var _ = Describe("BuildToolDetector", func() {
 				BodyString(string(bodyString))
 			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
 			Expect(buildTool.BuildToolType).Should(Equal("maven"), "buildTool should not be empty")
+		})
+
+		It("Recognize NodeJS - Branch included in URL", func() {
+			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_ui/ok_branch.json")
+			Expect(err).Should(BeNil())
+
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-ui/fabric8-ui/branches/master").
+				Reply(200).
+				BodyString(string(bodyString))
+
+			bodyString, err = ioutil.ReadFile("../controllers/test/mock/fabric8_ui/ok_contents.json")
+			Expect(err).Should(BeNil())
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-ui/fabric8-ui/contents/package.json").
+				Reply(200).
+				BodyString(string(bodyString))
+			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-ui/fabric8-ui/tree/master", nil)
+			Expect(buildTool.BuildToolType).Should(Equal("nodejs"), "buildTool should be nodejs")
 		})
 	})
 })

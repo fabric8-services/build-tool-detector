@@ -5,6 +5,8 @@ package main
 import (
 	"strconv"
 
+	"net/http"
+
 	"github.com/fabric8-services/build-tool-detector/app"
 	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/controllers"
@@ -15,6 +17,7 @@ import (
 	"github.com/goadesign/goa"
 	"github.com/goadesign/goa/middleware"
 	"github.com/goadesign/goa/middleware/security/jwt"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/spf13/viper"
 )
 
@@ -73,6 +76,19 @@ func main() {
 
 	cs := controllers.NewSwaggerController(service)
 	app.MountSwaggerController(service, cs)
+
+	// Start/mount metrics http
+	if configuration.Metrics.Port == configuration.Server.Port {
+		http.Handle("/metrics", promhttp.Handler())
+	} else {
+		go func(metricAddress string) {
+			mx := http.NewServeMux()
+			mx.Handle("/metrics", promhttp.Handler())
+			if err := http.ListenAndServe(metricAddress, mx); err != nil {
+				service.LogError("startup", "err", err)
+			}
+		}(":" + strconv.Itoa(configuration.Server.Port)) // TODO FIX CONFIG
+	}
 
 	// Start service
 	if err := service.ListenAndServe(":" + strconv.Itoa(configuration.Server.Port)); err != nil {

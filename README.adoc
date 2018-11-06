@@ -4,7 +4,7 @@
 Little service which will detect what build tool you are using
 
 === Start hacking [[hacking]]
-Use `environment_sample.sh` as a template to create your own `environment.sh` file with the appropriate environment variable values. 
+Use `config-template.yml` as a template to create your own `config.yml` file with the appropriate environment variable values. The application will not run unless a github client id and github client secret are provided.
 
 Use `setup.sh` script we ship in this repository to get started right away! Simply run following `curl` command to get
 latest and the greatest setup.

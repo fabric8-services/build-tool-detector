@@ -1,0 +1,98 @@
+{
+    "name": "master",
+    "commit": {
+        "sha": "395c7d63f8a0123487d66f3156429404f170a910",
+        "node_id": "MDY6Q29tbWl0NzM4MjQ3MzY6Mzk1YzdkNjNmOGEwMTIzNDg3ZDY2ZjMxNTY0Mjk0MDRmMTcwYTkxMA==",
+        "commit": {
+            "author": {
+                "name": "Christian Vogt",
+                "email": "cvogt@redhat.com",
+                "date": "2018-11-05T04:03:12Z"
+            },
+            "committer": {
+                "name": "Joshua Wilson",
+                "email": "javajoshw@gmail.com",
+                "date": "2018-11-05T04:03:12Z"
+            },
+            "message": "fix(package): up-version the merge package due to vulnerability (#3403)",
+            "tree": {
+                "sha": "5e91e8b1119a824a3dac7fc5e49be70125a98ddc",
+                "url": "https://api.github.com/repos/fabric8-ui/fabric8-ui/git/trees/5e91e8b1119a824a3dac7fc5e49be70125a98ddc"
+            },
+            "url": "https://api.github.com/repos/fabric8-ui/fabric8-ui/git/commits/395c7d63f8a0123487d66f3156429404f170a910",
+            "comment_count": 0,
+            "verification": {
+                "verified": false,
+                "reason": "unsigned",
+                "signature": null,
+                "payload": null
+            }
+        },
+        "url": "https://api.github.com/repos/fabric8-ui/fabric8-ui/commits/395c7d63f8a0123487d66f3156429404f170a910",
+        "html_url": "https://github.com/fabric8-ui/fabric8-ui/commit/395c7d63f8a0123487d66f3156429404f170a910",
+        "comments_url": "https://api.github.com/repos/fabric8-ui/fabric8-ui/commits/395c7d63f8a0123487d66f3156429404f170a910/comments",
+        "author": {
+            "login": "christianvogt",
+            "id": 14068621,
+            "node_id": "MDQ6VXNlcjE0MDY4NjIx",
+            "avatar_url": "https://avatars3.githubusercontent.com/u/14068621?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/christianvogt",
+            "html_url": "https://github.com/christianvogt",
+            "followers_url": "https://api.github.com/users/christianvogt/followers",
+            "following_url": "https://api.github.com/users/christianvogt/following{/other_user}",
+            "gists_url": "https://api.github.com/users/christianvogt/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/christianvogt/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/christianvogt/subscriptions",
+            "organizations_url": "https://api.github.com/users/christianvogt/orgs",
+            "repos_url": "https://api.github.com/users/christianvogt/repos",
+            "events_url": "https://api.github.com/users/christianvogt/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/christianvogt/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "committer": {
+            "login": "joshuawilson",
+            "id": 1184371,
+            "node_id": "MDQ6VXNlcjExODQzNzE=",
+            "avatar_url": "https://avatars2.githubusercontent.com/u/1184371?v=4",
+            "gravatar_id": "",
+            "url": "https://api.github.com/users/joshuawilson",
+            "html_url": "https://github.com/joshuawilson",
+            "followers_url": "https://api.github.com/users/joshuawilson/followers",
+            "following_url": "https://api.github.com/users/joshuawilson/following{/other_user}",
+            "gists_url": "https://api.github.com/users/joshuawilson/gists{/gist_id}",
+            "starred_url": "https://api.github.com/users/joshuawilson/starred{/owner}{/repo}",
+            "subscriptions_url": "https://api.github.com/users/joshuawilson/subscriptions",
+            "organizations_url": "https://api.github.com/users/joshuawilson/orgs",
+            "repos_url": "https://api.github.com/users/joshuawilson/repos",
+            "events_url": "https://api.github.com/users/joshuawilson/events{/privacy}",
+            "received_events_url": "https://api.github.com/users/joshuawilson/received_events",
+            "type": "User",
+            "site_admin": false
+        },
+        "parents": [
+            {
+                "sha": "83d9783dea4d80d3bc68205b70f5359b745dc694",
+                "url": "https://api.github.com/repos/fabric8-ui/fabric8-ui/commits/83d9783dea4d80d3bc68205b70f5359b745dc694",
+                "html_url": "https://github.com/fabric8-ui/fabric8-ui/commit/83d9783dea4d80d3bc68205b70f5359b745dc694"
+            }
+        ]
+    },
+    "links": {
+        "self": "https://api.github.com/repos/fabric8-ui/fabric8-ui/branches/master",
+        "html": "https://github.com/fabric8-ui/fabric8-ui/tree/master"
+    },
+    "protected": true,
+    "protection": {
+        "enabled": true,
+        "required_status_checks": {
+            "enforcement_level": "non_admins",
+            "contexts": [
+                "ci.centos.org PR build",
+                "alien-ike/test-keeper"
+            ]
+        }
+    },
+    "protection_url": "https://api.github.com/repos/fabric8-ui/fabric8-ui/branches/master/protection"
+}

@@ -14,9 +14,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/google/go-github/github"
 	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/domain/types"
+	"github.com/google/go-github/github"
 )
 
 const (
