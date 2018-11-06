@@ -20,7 +20,7 @@ github:
 #-----------------------
 # Sentry Authentication \
 #------------------------------------------------------------------------------
-# This section defines sebtry authentication
+# This section defines sentry authentication
 sentry:
     dsn: ""
 
