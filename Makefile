@@ -234,7 +234,7 @@ check: ## Concurrently runs a whole bunch of static analysis tools
 
 .PHONY: run
 run: build ## runs the service locally
-	$SERVER_BIN
+	$(SERVER_BIN)
 
 .PHONY: tools
 tools: ## Installs all necessary tools
