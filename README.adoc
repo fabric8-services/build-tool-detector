@@ -1,40 +1,47 @@
 = Build Tool Detector
 :test: gometaliner
 
-Little service which will detect what build tool you are using
+Little service which will detect what build tool you are using.
 
-=== Start hacking [[hacking]]
-Use `config-template.yml` as a template to create your own `config.yml` file with the appropriate environment variable values. The application will not run unless a github client id and github client secret are provided.
+=== Build [[build]]
 
-Use `setup.sh` script we ship in this repository to get started right away! Simply run following `curl` command to get
-latest and the greatest setup.
+==== Pre-requisites
+* link:https://golang.org/doc/install[Golang prerequisites] and `$GOPATH` setup.
+
+NOTE: Stick to Golang version 10 because of link:https://github.com/goadesign/goa/pull/1548[goa and golang 11]. Have a look how link:https://github.com/moovweb/gvm[Go Version Manager] can help you simplifying configuration and management of different versions of Go.
+
+==== Setup
+* Use `config-template.yml` as a template to create your own `config.yml` file with the appropriate environment variable values.
+[source,bash]
+----
+$ cp config-template.yml config.yml
+----
+* TODO explain GH OAuth needs. The application will not run unless a github client id and github client secret are provided.
+
+==== Build
 
 [source,bash]
 ----
-$ curl -sSL https://git.io/fAPbw | bash
+$ make run
 ----
 
-Assuming that you have all the link:https://golang.org/doc/install[Golang prerequisites] in place (such as `$GOPATH`), clone the repository first.
-
-NOTE: Have a look how link:https://github.com/moovweb/gvm[Go Version Manager] can help you simplifying configuration and management of different versions of Go.
-
-Then run the build by simply executing `make` from the root directory. This will perform following actions:
+This will perform following actions:
 
 . Clean artifacts from the previous build
 . Fetch or update dependencies using `godep`
+. Generate Goa files from design folder
 . Compile and build binaries
-. Run tests
-. Run static code analysis
+. Run `build-tool-detector`
 
 When in doubt just `make help`.
 
-=== Continuous Testing [[testing]]
+=== Test [[test]]
 
 In order to continuously run the tests whenever code change occur execute following command from the root directory of the project:
 
 [source,bash]
 ----
-$ ginkgo watch -r
+$ make test
 ----
 
 and keep it running in the terminal.
