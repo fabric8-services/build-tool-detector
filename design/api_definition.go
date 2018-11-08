@@ -22,7 +22,7 @@ var _ = a.API("build-tool-detector", func() {
 	})
 
 	a.Scheme("http")
-	a.Host("localhost:8080")
+	a.Host("localhost:8099")
 	a.Version("1.0")
 	a.BasePath("/build-tool-detector")
 
