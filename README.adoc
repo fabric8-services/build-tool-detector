@@ -50,3 +50,12 @@ $ make test
 ----
 
 and keep it running in the terminal.
+
+=== Run [[run]]
+
+Run the server:
+
+[source,bash]
+----
+$ make run
+----
