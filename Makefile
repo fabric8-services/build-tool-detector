@@ -172,9 +172,9 @@ build: $(SERVER_BIN) ## Build the server
 generate: prebuild-check $(DESIGNS) $(GOAGEN_BIN) $(VENDOR_DIR) ## Generate GOA sources. Only necessary after clean of if changed `design` folder.
 	$(GOAGEN_BIN) app -d ${PACKAGE_NAME}/${DESIGN_DIR}
 	$(GOAGEN_BIN) controller -d ${PACKAGE_NAME}/${DESIGN_DIR} -o controllers/ --pkg controllers --app-pkg ${PACKAGE_NAME}/app
+	$(GOAGEN_BIN) gen -d ${PACKAGE_NAME}/${DESIGN_DIR} --pkg-path=github.com/fabric8-services/fabric8-common/goasupport/status --out app
 	$(GOAGEN_BIN) swagger -d ${PACKAGE_NAME}/${DESIGN_DIR}
 	
-
 .PHONY: test 
 test: test-deps  ## Executes all tests
 	$(GINKGO_BIN) -r

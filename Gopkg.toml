@@ -25,6 +25,8 @@
 #   unused-packages = true
 
 required = [
+    "github.com/fabric8-services/fabric8-common/goasupport/status", # needed by goa generator
+    "github.com/fabric8-services/fabric8-common/token",
     "github.com/goadesign/goa/cors",
     "github.com/goadesign/goa/encoding/form",
     "github.com/goadesign/goa/goagen",
@@ -36,7 +38,6 @@ required = [
     "github.com/goadesign/goa/goagen/utils",
     "github.com/goadesign/goa/goatest",
     "github.com/google/go-github/github",
-    "github.com/fabric8-services/fabric8-common/token",
     "github.com/onsi/ginkgo/ginkgo",
 ]
 

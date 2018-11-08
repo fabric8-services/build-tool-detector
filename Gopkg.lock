@@ -55,11 +55,11 @@
     "configuration",
     "errors",
     "goamiddleware",
+    "goasupport/status",
     "httpsupport",
     "log",
     "token",
-    "token/jwk",
-    "token/tokencontext"
+    "token/jwk"
   ]
   revision = "45960af9689499e9f5e5a4ebd142a8189a19ca1e"
 
@@ -447,6 +447,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "3f2d7aa4796726ba633d17709144d7c787257ce0b0810475361a944641dc0995"
+  inputs-digest = "8fb1550f9db4f0f87da6f2812746112e4c2a16968197bd8e0e1cd567a1d2f149"
   solver-name = "gps-cdcl"
   solver-version = 1
