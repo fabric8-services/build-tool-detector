@@ -81,13 +81,14 @@ func main() {
 	if configuration.Metrics.Port == configuration.Server.Port {
 		http.Handle("/metrics", promhttp.Handler())
 	} else {
+
 		go func(metricAddress string) {
 			mx := http.NewServeMux()
 			mx.Handle("/metrics", promhttp.Handler())
 			if err := http.ListenAndServe(metricAddress, mx); err != nil {
 				service.LogError("startup", "err", err)
 			}
-		}(":" + strconv.Itoa(configuration.Server.Port)) // TODO FIX CONFIG
+		}(":" + strconv.Itoa(configuration.Metrics.Port)) // if no port defined in config file, pick one available.
 	}
 
 	// Start service
