@@ -1,4 +1,3 @@
-//go:generate goagen bootstrap -d github.com/fabric8-services/build-tool-detector/design
 
 package main
 

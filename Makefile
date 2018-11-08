@@ -235,20 +235,3 @@ check: ## Concurrently runs a whole bunch of static analysis tools
 .PHONY: run
 run: build ## runs the service locally
 	$(SERVER_BIN)
-
-.PHONY: tools
-tools: ## Installs all necessary tools
-	@echo "Installing gometalinter"
-	@go get -u github.com/alecthomas/gometalinter 
-
-	@echo "Installing ginkgo"
-	@go get -u github.com/onsi/ginkgo/ginkgo
-
-	@echo "Installing gock"
-	@go get -u gopkg.in/h2non/gock.v1
-	
-	@echo "Installing goimports"
-	@go get -u golang.org/x/tools/cmd/goimports
-
-	@echo "Installing goa"
-	@go get -u github.com/goadesign/goa
