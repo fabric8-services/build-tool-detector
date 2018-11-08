@@ -41,6 +41,7 @@ var _ = a.API("build-tool-detector", func() {
 	})
 })
 
+// TODO: Fix this when configuration is fixed: https://github.com/fabric8-services/build-tool-detector/issues/2
 func getHost() string {
 	viper.SetConfigName("config")
 	viper.AddConfigPath(".")
