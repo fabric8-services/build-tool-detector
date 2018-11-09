@@ -15,7 +15,7 @@ import (
 // the repository url and branch
 var _ = a.Resource("detect", func() {
 	a.BasePath("/detect")
-	a.DefaultMedia(BuildToolDetectorMedia)
+	a.DefaultMedia(DetectBuildMedia)
 	a.Action("show", func() {
 		a.Security("jwt")
 		a.Description("Detects the build tool for a given repository and branch.")
@@ -33,8 +33,8 @@ var _ = a.Resource("detect", func() {
 	})
 })
 
-// BuildToolDetectorMedia defines the media type used to render the build tool
-var BuildToolDetectorMedia = a.MediaType("application/vnd.goa.detect+json", func() {
+// DetectBuildMedia defines the media type used to render the build tool
+var DetectBuildMedia = a.MediaType("application/vnd.goa.detect+json", func() {
 	a.Description("Detected build tool type.")
 	a.Attributes(func() {
 		a.Attribute("build-tool-type", d.String, "Name of build tool")
