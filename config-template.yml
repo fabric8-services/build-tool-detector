@@ -31,3 +31,7 @@ sentry:
 server:
   host: "localhost"
   port: 8099
+# This section defines the url used by metrics.
+Metrics:
+  host: "localhost"
+  port: 8099
