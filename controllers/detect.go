@@ -38,19 +38,19 @@ const (
 	buildToolDetectorController = "BuildToolDetectorController"
 )
 
-// BuildToolDetectorController implements the build-tool-detector resource.
-type BuildToolDetectorController struct {
+// DetectController implements the build-tool-detector resource.
+type DetectController struct {
 	*goa.Controller
 	config.Configuration
 }
 
-// NewBuildToolDetectorController creates a build-tool-detector controller.
-func NewBuildToolDetectorController(service *goa.Service, configuration config.Configuration) *BuildToolDetectorController {
-	return &BuildToolDetectorController{Controller: service.NewController(buildToolDetectorController), Configuration: configuration}
+// NewDetectController creates a build-tool-detector controller.
+func NewDetectController(service *goa.Service, configuration config.Configuration) *DetectController {
+	return &DetectController{Controller: service.NewController(buildToolDetectorController), Configuration: configuration}
 }
 
 // Show runs the show action.
-func (c *BuildToolDetectorController) Show(ctx *app.ShowBuildToolDetectorContext) error {
+func (c *DetectController) Show(ctx *app.ShowDetectContext) error {
 	rawURL := ctx.URL
 	repositoryService, err := repository.CreateService(rawURL, ctx.Branch, c.Configuration)
 	ctx.ResponseWriter.Header().Set(contentType, applicationJSON)
@@ -69,7 +69,7 @@ func (c *BuildToolDetectorController) Show(ctx *app.ShowBuildToolDetectorContext
 
 // handleSuccess handles returning
 // the correct json for 200 OK responses.
-func handleSuccess(buildToolType string) *app.GoaBuildToolDetector {
+func handleSuccess(buildToolType string) *app.GoaDetect {
 	switch buildToolType {
 	case types.Maven:
 		return types.NewMaven()
@@ -84,7 +84,7 @@ func handleSuccess(buildToolType string) *app.GoaBuildToolDetector {
 
 // handleError handles returning
 // the correct http responses upon error.
-func handleError(ctx *app.ShowBuildToolDetectorContext, err error) error {
+func handleError(ctx *app.ShowDetectContext, err error) error {
 	switch err.Error() {
 	case github.ErrInvalidPath.Error():
 		httpError := errs.ErrBadRequest(err)
@@ -118,7 +118,7 @@ func handleError(ctx *app.ShowBuildToolDetectorContext, err error) error {
 
 // formatResponse writes the header
 // and formats the response.
-func formatResponse(ctx *app.ShowBuildToolDetectorContext, httpTypeError *errs.HTTPTypeError) error {
+func formatResponse(ctx *app.ShowDetectContext, httpTypeError *errs.HTTPTypeError) error {
 	ctx.WriteHeader(httpTypeError.StatusCode)
 	jsonHTTPTypeError, err := json.Marshal(httpTypeError)
 	if err != nil {

@@ -49,8 +49,8 @@ type BuildType struct {
 // NewMaven will create a buildToolDetector
 // struct with the BuildToolType set
 // to maven.
-func NewMaven() *app.GoaBuildToolDetector {
-	return &app.GoaBuildToolDetector{
+func NewMaven() *app.GoaDetect {
+	return &app.GoaDetect{
 		BuildToolType: Maven,
 	}
 }
@@ -58,8 +58,8 @@ func NewMaven() *app.GoaBuildToolDetector {
 // NewNodeJS will create a buildToolDetector
 // struct with the BuildToolType set
 // to NodeJS.
-func NewNodeJS() *app.GoaBuildToolDetector {
-	return &app.GoaBuildToolDetector{
+func NewNodeJS() *app.GoaDetect {
+	return &app.GoaDetect{
 		BuildToolType: NodeJS,
 	}
 }
@@ -67,8 +67,8 @@ func NewNodeJS() *app.GoaBuildToolDetector {
 // NewUnknown will create a buildToolDetector
 // struct with the BuildToolType set
 // to unknown.
-func NewUnknown() *app.GoaBuildToolDetector {
-	return &app.GoaBuildToolDetector{
+func NewUnknown() *app.GoaDetect {
+	return &app.GoaDetect{
 		BuildToolType: Unknown,
 	}
 }

@@ -70,13 +70,13 @@ func main() {
 	service.Use(token.InjectTokenManager(tokenManager))
 	app.UseJWTMiddleware(service, jwt.New(tokenManager.PublicKeys(), nil, app.NewJWTSecurity()))
 
-	// Mount "build-tool-detector" controller
-	c := controllers.NewBuildToolDetectorController(service, configuration)
-	app.MountBuildToolDetectorController(service, c)
+	// Mount detect controller
+	app.MountDetectController(service, controllers.NewDetectController(service, configuration))
 
-	cs := controllers.NewSwaggerController(service)
-	app.MountSwaggerController(service, cs)
+	// Mount swagger controller
+	app.MountSwaggerController(service, controllers.NewSwaggerController(service))
 
+	// Mount status controller
 	app.MountStatusController(service, controllers.NewStatusController(service))
 
 	// Start/mount metrics http

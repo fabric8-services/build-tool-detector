@@ -13,7 +13,7 @@ import (
 
 // Endpoint to detect the build tool type based off the
 // the repository url and branch
-var _ = a.Resource("build-tool-detector", func() {
+var _ = a.Resource("detect", func() {
 	a.BasePath("/detect")
 	a.DefaultMedia(BuildToolDetectorMedia)
 	a.Action("show", func() {
@@ -34,7 +34,7 @@ var _ = a.Resource("build-tool-detector", func() {
 })
 
 // BuildToolDetectorMedia defines the media type used to render the build tool
-var BuildToolDetectorMedia = a.MediaType("application/vnd.goa.build.tool.detector+json", func() {
+var BuildToolDetectorMedia = a.MediaType("application/vnd.goa.detect+json", func() {
 	a.Description("Detected build tool type.")
 	a.Attributes(func() {
 		a.Attribute("build-tool-type", d.String, "Name of build tool")
