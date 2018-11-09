@@ -77,6 +77,8 @@ func main() {
 	cs := controllers.NewSwaggerController(service)
 	app.MountSwaggerController(service, cs)
 
+	app.MountStatusController(service, controllers.NewStatusController(service))
+
 	// Start/mount metrics http
 	if configuration.Metrics.Port == configuration.Server.Port {
 		http.Handle("/metrics", promhttp.Handler())

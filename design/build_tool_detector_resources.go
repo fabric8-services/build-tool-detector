@@ -14,13 +14,13 @@ import (
 // Endpoint to detect the build tool type based off the
 // the repository url and branch
 var _ = a.Resource("build-tool-detector", func() {
-	a.BasePath("/build-tool-detector")
+	a.BasePath("/detect")
 	a.DefaultMedia(BuildToolDetectorMedia)
 	a.Action("show", func() {
 		a.Security("jwt")
 		a.Description("Detects the build tool for a given repository and branch.")
 		a.Routing(
-			a.GET("/:url"),
+			a.GET("/build/:url"),
 		)
 		a.Params(func() {
 			a.Param("url", d.String, "repository url")
