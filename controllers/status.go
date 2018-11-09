@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+
 	"github.com/fabric8-services/build-tool-detector/app"
 	"github.com/goadesign/goa"
 )

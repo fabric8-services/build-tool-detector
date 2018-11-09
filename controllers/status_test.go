@@ -1,13 +1,14 @@
 package controllers_test
 
 import (
+	"io/ioutil"
+
 	"github.com/fabric8-services/build-tool-detector/app/test"
 	controllers "github.com/fabric8-services/build-tool-detector/controllers"
 	"github.com/goadesign/goa"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"gopkg.in/h2non/gock.v1"
-	"io/ioutil"
 )
 
 var _ = Describe("Status", func() {
