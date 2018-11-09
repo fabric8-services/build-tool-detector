@@ -46,7 +46,7 @@ type BuildType struct {
 	File      string
 }
 
-// NewMaven will create a buildToolDetector
+// NewMaven will create a detect
 // struct with the BuildToolType set
 // to maven.
 func NewMaven() *app.GoaDetect {
@@ -55,7 +55,7 @@ func NewMaven() *app.GoaDetect {
 	}
 }
 
-// NewNodeJS will create a buildToolDetector
+// NewNodeJS will create a detect
 // struct with the BuildToolType set
 // to NodeJS.
 func NewNodeJS() *app.GoaDetect {
@@ -64,7 +64,7 @@ func NewNodeJS() *app.GoaDetect {
 	}
 }
 
-// NewUnknown will create a buildToolDetector
+// NewUnknown will create a detect
 // struct with the BuildToolType set
 // to unknown.
 func NewUnknown() *app.GoaDetect {

@@ -38,13 +38,13 @@ const (
 	buildToolDetectorController = "BuildToolDetectorController"
 )
 
-// DetectController implements the build-tool-detector resource.
+// DetectController implements the detect resource.
 type DetectController struct {
 	*goa.Controller
 	config.Configuration
 }
 
-// NewDetectController creates a build-tool-detector controller.
+// NewDetectController creates a detect controller.
 func NewDetectController(service *goa.Service, configuration config.Configuration) *DetectController {
 	return &DetectController{Controller: service.NewController(buildToolDetectorController), Configuration: configuration}
 }
