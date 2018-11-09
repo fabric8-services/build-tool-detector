@@ -12,18 +12,16 @@ import (
 )
 
 var _ = a.Resource("status", func() {
-
-	a.DefaultMedia(Status)
 	a.BasePath("/status")
-
+	a.DefaultMedia(Status)
 	a.Action("show", func() {
 		a.Routing(
 			a.GET("/"),
 		)
+		a.Security("jwt")
 		a.Description("Show the status of the current running instance")
 		a.Response(d.OK)
 	})
-
 })
 
 // Status defines the status of the current running instance
