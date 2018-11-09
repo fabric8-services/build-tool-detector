@@ -18,7 +18,6 @@ var _ = a.Resource("status", func() {
 		a.Routing(
 			a.GET("/"),
 		)
-		a.Security("jwt")
 		a.Description("Show the status of the current running instance")
 		a.Response(d.OK)
 	})
