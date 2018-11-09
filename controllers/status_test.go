@@ -13,7 +13,7 @@ import (
 
 var _ = Describe("Status", func() {
 
-	Context("Configuration", func() {
+	Context("OK Status", func() {
 		var service *goa.Service
 
 		BeforeEach(func() {
@@ -23,7 +23,7 @@ var _ = Describe("Status", func() {
 			gock.Off()
 		})
 
-		It("Configuration incorrect - No github_client_id / github_client_secret", func() {
+		It("Status OK - returns the status build id, build time and start time", func() {
 			bodyString, err := ioutil.ReadFile("../controllers/test/mock/localhost/ok_status.json")
 			Expect(err).Should(BeNil())
 
