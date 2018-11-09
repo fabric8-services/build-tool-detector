@@ -23,7 +23,7 @@ var _ = Describe("Status", func() {
 			gock.Off()
 		})
 
-		It("Status OK - returns the status build id, build time and start time", func() {
+		It("Status OK - returns the status commit, build time and start time", func() {
 			bodyString, err := ioutil.ReadFile("../controllers/test/mock/localhost/ok_status.json")
 			Expect(err).Should(BeNil())
 
