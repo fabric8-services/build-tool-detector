@@ -11,6 +11,7 @@ import (
 
 // API the function to define the top-level API DSL of the application.
 var _ = a.API("build-tool-detector", func() {
+	a.Title("Build Tool Detector")
 	a.Host("openshift.io")
 	a.Scheme("http")
 	a.BasePath("/api")
