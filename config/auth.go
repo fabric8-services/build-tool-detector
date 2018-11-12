@@ -9,5 +9,3 @@ type AuthConfiguration struct {
 func (c *AuthConfiguration) GetAuthServiceURL() string {
 	return c.URI
 }
-
-
