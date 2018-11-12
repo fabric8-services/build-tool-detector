@@ -1,9 +1,6 @@
-
 package main
 
 import (
-	"strconv"
-
 	"net/http"
 
 	"github.com/fabric8-services/build-tool-detector/app"
@@ -17,7 +14,6 @@ import (
 	"github.com/goadesign/goa/middleware"
 	"github.com/goadesign/goa/middleware/security/jwt"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/spf13/viper"
 )
 
 const (
@@ -28,22 +24,11 @@ const (
 
 func main() {
 
-	viper.SetConfigName("config")
-	viper.AddConfigPath(".")
-	var configuration config.Configuration
-
-	if err := viper.ReadInConfig(); err != nil {
-		log.Logger().Fatalf("Error reading config file, %s", err)
-	}
-	err := viper.Unmarshal(&configuration)
-	if err != nil {
-		log.Logger().Fatalf("unable to decode into struct, %v", err)
-	}
-
-	if configuration.Github.ClientID == "" || configuration.Github.ClientSecret == "" {
+	configuration, _ := config.New("config")
+	if configuration.GetGithubClientID() == "" || configuration.GetGithubClientSecret() == "" {
 		log.Logger().
-			WithField(github.ClientID, configuration.Github.ClientID).
-			WithField(github.ClientSecret, configuration.Github.ClientSecret).
+			WithField(github.ClientID, configuration.GetGithubClientID()).
+			WithField(github.ClientSecret, configuration.GetGithubClientSecret()).
 			Fatalf(github.ErrFatalMissingGHAttributes.Error())
 	}
 
@@ -56,7 +41,7 @@ func main() {
 	service.Use(middleware.ErrorHandler(service, true))
 	service.Use(middleware.Recover())
 
-	tokenManager, err := token.NewManager(&config.AuthConfiguration{URI: configuration.Auth.URI})
+	tokenManager, err := token.NewManager(configuration)
 	if err != nil {
 		log.Logger().Panic(nil, map[string]interface{}{
 			"err": err,
@@ -70,7 +55,7 @@ func main() {
 	app.UseJWTMiddleware(service, jwt.New(tokenManager.PublicKeys(), nil, app.NewJWTSecurity()))
 
 	// Mount "build-tool-detector" controller
-	c := controllers.NewBuildToolDetectorController(service, configuration)
+	c := controllers.NewBuildToolDetectorController(service, *configuration)
 	app.MountBuildToolDetectorController(service, c)
 
 	cs := controllers.NewSwaggerController(service)
@@ -79,7 +64,7 @@ func main() {
 	app.MountStatusController(service, controllers.NewStatusController(service))
 
 	// Start/mount metrics http
-	if configuration.Metrics.Port == configuration.Server.Port {
+	if configuration.GetPort() == configuration.GetPort() {
 		http.Handle("/metrics", promhttp.Handler())
 	} else {
 
@@ -89,11 +74,11 @@ func main() {
 			if err := http.ListenAndServe(metricAddress, mx); err != nil {
 				service.LogError("startup", "err", err)
 			}
-		}(":" + strconv.Itoa(configuration.Metrics.Port)) // if no port defined in config file, pick one available.
+		}(":" + configuration.GetPort()) // if no port defined in config file, pick one available.
 	}
 
 	// Start service
-	if err := service.ListenAndServe(":" + strconv.Itoa(configuration.Server.Port)); err != nil {
+	if err := service.ListenAndServe(":" + configuration.GetPort()); err != nil {
 		service.LogError(startup, errorz, err)
 	}
 }

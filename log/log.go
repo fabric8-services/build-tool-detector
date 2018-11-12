@@ -34,8 +34,8 @@ func Logger() *logrus.Entry {
 
 	// TODO: have env variable to specify we are running tests which
 	// will return a different logger.
-	if configuration.Sentry.DSN != "" {
-		hook, err := logrus_sentry.NewSentryHook(configuration.Sentry.DSN, []logrus.Level{
+	if configuration.GetSentryDSN() != "" {
+		hook, err := logrus_sentry.NewSentryHook(configuration.GetSentryDSN(), []logrus.Level{
 			logrus.PanicLevel,
 			logrus.FatalLevel,
 			logrus.ErrorLevel,

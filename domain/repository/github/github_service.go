@@ -136,8 +136,8 @@ func newRepository(segments []string, ctxBranch *string, configuration config.Co
 		owner:        segments[1],
 		repository:   segments[2],
 		branch:       branch,
-		clientID:     configuration.Github.ClientID,
-		clientSecret: configuration.Github.ClientSecret,
+		clientID:     configuration.GetGithubClientID(),
+		clientSecret: configuration.GetGithubClientSecret(),
 	}
 
 	return repositoryService, nil
