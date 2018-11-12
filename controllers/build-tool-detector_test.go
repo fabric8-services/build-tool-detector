@@ -16,7 +16,6 @@ import (
 	"github.com/goadesign/goa"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/spf13/viper"
 	"gopkg.in/h2non/gock.v1"
 )
 
@@ -24,17 +23,11 @@ var _ = Describe("BuildToolDetector", func() {
 
 	Context("Configuration", func() {
 		var service *goa.Service
-		var configuration config.Configuration
+		var configuration *config.Configuration
 
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
-
-			viper.SetConfigName("config-template")
-			viper.AddConfigPath("../")
-			viper.ReadInConfig()
-			viper.Unmarshal(&configuration)
-			configuration.Github.ClientID = ""
-			configuration.Github.ClientSecret = ""
+			configuration = config.New()
 		})
 		AfterEach(func() {
 			gock.Off()
@@ -55,23 +48,17 @@ var _ = Describe("BuildToolDetector", func() {
 				Get("/repos/fabric8-launcher/launcher-backend/contents/pom.xml").
 				Reply(404).
 				BodyString(string(bodyString))
-			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
+			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
 		})
 	})
 
 	Context("Internal Server Error", func() {
 		var service *goa.Service
-		var configuration config.Configuration
+		var configuration *config.Configuration
 
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
-
-			viper.SetConfigName("config-template")
-			viper.AddConfigPath("../")
-			viper.ReadInConfig()
-			viper.Unmarshal(&configuration)
-			configuration.Github.ClientID = "test"
-			configuration.Github.ClientSecret = "test"
+			configuration = config.New()
 		})
 		AfterEach(func() {
 			gock.Off()
@@ -87,7 +74,7 @@ var _ = Describe("BuildToolDetector", func() {
 				BodyString(string(bodyString))
 
 			branch := "master"
-			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcherz/launcher-backend", &branch)
+			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-launcherz/launcher-backend", &branch)
 		})
 
 		It("Non-existent owner name -- 404 Owner Not Found", func() {
@@ -100,7 +87,7 @@ var _ = Describe("BuildToolDetector", func() {
 				BodyString(string(bodyString))
 
 			branch := "master"
-			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backendz", &branch)
+			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-launcher/launcher-backendz", &branch)
 		})
 
 		It("Non-existent branch name -- 404 Branch Not Found", func() {
@@ -112,37 +99,31 @@ var _ = Describe("BuildToolDetector", func() {
 				Reply(404).
 				BodyString(string(bodyString))
 
-			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/masterz", nil)
+			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/masterz", nil)
 		})
 
 		It("Invalid URL -- 400 Bad Request", func() {
 			branch := "master"
-			test.ShowBuildToolDetectorBadRequest(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "fabric8-launcher/launcher-backend", &branch)
+			test.ShowBuildToolDetectorBadRequest(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "fabric8-launcher/launcher-backend", &branch)
 		})
 
 		It("Unsupported Git Service -- 500 Internal Server Error", func() {
 			branch := "master"
-			test.ShowBuildToolDetectorInternalServerError(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "http://gitlab.com/fabric8-launcher/launcher-backend", &branch)
+			test.ShowBuildToolDetectorInternalServerError(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "http://gitlab.com/fabric8-launcher/launcher-backend", &branch)
 		})
 
 		It("Invalid URL and Branch -- 500 Internal Server Error", func() {
-			test.ShowBuildToolDetectorBadRequest(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "", nil)
+			test.ShowBuildToolDetectorBadRequest(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "", nil)
 		})
 	})
 
 	Context("Okay", func() {
 		var service *goa.Service
-		var configuration config.Configuration
+		var configuration *config.Configuration
 
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
-
-			viper.SetConfigName("config-template")
-			viper.AddConfigPath("../")
-			viper.ReadInConfig()
-			viper.Unmarshal(&configuration)
-			configuration.Github.ClientID = "test"
-			configuration.Github.ClientSecret = "test"
+			configuration = config.New()
 		})
 		AfterEach(func() {
 			gock.Off()
@@ -163,7 +144,7 @@ var _ = Describe("BuildToolDetector", func() {
 				Reply(404).
 				BodyString(string(bodyString))
 			branch := "master"
-			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-services/fabric8-wit", &branch)
+			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-services/fabric8-wit", &branch)
 			Expect(buildTool.BuildToolType).Should(Equal("unknown"), "buildTool should not be empty")
 		})
 
@@ -182,7 +163,7 @@ var _ = Describe("BuildToolDetector", func() {
 				Get("/repos/fabric8-services/fabric8-wit/contents/pom.xml").
 				Reply(404).
 				BodyString(string(bodyString))
-			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-services/fabric8-wit/tree/master", nil)
+			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-services/fabric8-wit/tree/master", nil)
 			Expect(buildTool.BuildToolType).Should(Equal("unknown"), "buildTool should not be empty")
 		})
 
@@ -202,7 +183,7 @@ var _ = Describe("BuildToolDetector", func() {
 				Reply(200).
 				BodyString(string(bodyString))
 			branch := "master"
-			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backend", &branch)
+			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-launcher/launcher-backend", &branch)
 			Expect(buildTool.BuildToolType).Should(Equal("maven"), "buildTool should not be empty")
 		})
 
@@ -221,7 +202,7 @@ var _ = Describe("BuildToolDetector", func() {
 				Get("/repos/fabric8-launcher/launcher-backend/contents/pom.xml").
 				Reply(200).
 				BodyString(string(bodyString))
-			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
+			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
 			Expect(buildTool.BuildToolType).Should(Equal("maven"), "buildTool should not be empty")
 		})
 
@@ -240,7 +221,7 @@ var _ = Describe("BuildToolDetector", func() {
 				Get("/repos/fabric8-ui/fabric8-ui/contents/package.json").
 				Reply(200).
 				BodyString(string(bodyString))
-			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, configuration), "https://github.com/fabric8-ui/fabric8-ui/tree/master", nil)
+			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-ui/fabric8-ui/tree/master", nil)
 			Expect(buildTool.BuildToolType).Should(Equal("nodejs"), "buildTool should be nodejs")
 		})
 	})

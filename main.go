@@ -24,8 +24,10 @@ const (
 
 func main() {
 
-	// Get a new configuration
-	configuration, _ := config.New()
+	// Get a new configuration.
+	configuration := config.New()
+
+	// If the github client id and/or github client secret are not set, fail.
 	if configuration.GetGithubClientID() == "" || configuration.GetGithubClientSecret() == "" {
 		log.Logger().
 			WithField(github.ClientID, configuration.GetGithubClientID()).

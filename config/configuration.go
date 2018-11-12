@@ -39,7 +39,7 @@ type Configuration struct {
 }
 
 // New returns a configuration with defaults set.
-func New() (*Configuration, error) {
+func New() *Configuration {
 
 	// Create new viper
 	configuration := Configuration{
@@ -53,7 +53,7 @@ func New() (*Configuration, error) {
 	configuration.viper.SetTypeByDefaultValue(true)
 	configuration.setConfigDefaults()
 
-	return &configuration, nil
+	return &configuration
 }
 
 // GetAuthServiceURL returns the server's port.
