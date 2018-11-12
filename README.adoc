@@ -40,6 +40,15 @@ $ make build
 This will perform following actions: fetch dependencies, generate Goa files from design folder, compile.
 When in doubt just `make help`.
 
+==== Usage
+[source,bash]
+----
+$ export TOKEN=XXXX
+$ curl -X GET "http://localhost:8099/api/detect/build/https%3A%2F%2Fgithub.com%2Ffabric8-launcher%2Flauncher-backend" -H "accept: application/vnd.goa.build.tool.detector+json" -H "Authorization: Bearer $TOKEN"
+{"build-tool-type":"maven"}
+----
+where TOKEN is your JWT token taken from link:https://prod-preview.openshift.io/[OpenShift.io prod-preview]
+
 === Test [[test]]
 
 In order to continuously run the tests whenever code change occur execute following command from the root directory of the project:
