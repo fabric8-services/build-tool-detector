@@ -1,3 +1,10 @@
+/*
+
+Package config implements a way to to
+handle configuration management using
+viper.
+
+*/
 package config
 
 import (
@@ -10,6 +17,7 @@ const (
 	authURI            = "auth.uri"
 	serverHost         = "server.host"
 	serverPort         = "server.port"
+	metricsPort        = "server.port"
 	githubClientID     = "github.client.id"
 	githubClientSecret = "github.client.secret"
 	sentryDSN          = "sentry.dsn"
@@ -25,18 +33,20 @@ const (
 	authKeysPath = "/api/token/keys"
 )
 
-// Configuration for build tool detector
+// Configuration for build tool detector.
 type Configuration struct {
 	viper *viper.Viper
 }
 
-// New returns a configuration with defaults set
-func New(filename string) (*Configuration, error) {
+// New returns a configuration with defaults set.
+func New() (*Configuration, error) {
 
+	// Create new viper
 	configuration := Configuration{
 		viper: viper.New(),
 	}
 
+	// Setup configuration.
 	configuration.viper.SetEnvPrefix(prefix)
 	configuration.viper.AutomaticEnv()
 	configuration.viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
@@ -46,32 +56,37 @@ func New(filename string) (*Configuration, error) {
 	return &configuration, nil
 }
 
-// GetAuthServiceURL returns the server's port
+// GetAuthServiceURL returns the server's port.
 func (c *Configuration) GetAuthServiceURL() string {
 	return c.viper.GetString(authURI)
 }
 
-// GetHost returns the server's host
+// GetHost returns the server's host.
 func (c *Configuration) GetHost() string {
 	return c.viper.GetString(serverHost)
 }
 
-// GetPort returns the server's port
+// GetPort returns the server's port.
 func (c *Configuration) GetPort() string {
 	return c.viper.GetString(serverPort)
 }
 
-// GetGithubClientID returs the github client id
+// GetMetricsPort returns the server's port.
+func (c *Configuration) GetMetricsPort() string {
+	return c.viper.GetString(metricsPort)
+}
+
+// GetGithubClientID returs the github client id.
 func (c *Configuration) GetGithubClientID() string {
 	return c.viper.GetString(githubClientID)
 }
 
-// GetGithubClientSecret returs the github client id
+// GetGithubClientSecret returs the github client id.
 func (c *Configuration) GetGithubClientSecret() string {
 	return c.viper.GetString(githubClientSecret)
 }
 
-// GetSentryDSN returs the github client id
+// GetSentryDSN returs the github client id.
 func (c *Configuration) GetSentryDSN() string {
 	return c.viper.GetString(sentryDSN)
 }
@@ -88,8 +103,10 @@ func (c *Configuration) GetDevModePrivateKey() []byte {
 	return nil
 }
 
+// setConfigDefaults sets defaults for configuration.
 func (c *Configuration) setConfigDefaults() {
 	c.viper.SetDefault(authURI, defaultAuth)
 	c.viper.SetDefault(serverHost, defaultHost)
 	c.viper.SetDefault(serverPort, defaultPort)
+	c.viper.SetDefault(metricsPort, defaultPort)
 }

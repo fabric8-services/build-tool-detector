@@ -24,7 +24,8 @@ const (
 
 func main() {
 
-	configuration, _ := config.New("config")
+	// Get a new configuration
+	configuration, _ := config.New()
 	if configuration.GetGithubClientID() == "" || configuration.GetGithubClientSecret() == "" {
 		log.Logger().
 			WithField(github.ClientID, configuration.GetGithubClientID()).
@@ -32,10 +33,10 @@ func main() {
 			Fatalf(github.ErrFatalMissingGHAttributes.Error())
 	}
 
-	// Create service
+	// Create service.
 	service := goa.New(buildToolDetector)
 
-	// Mount middleware
+	// Mount middleware.
 	service.Use(middleware.RequestID())
 	service.Use(middleware.LogRequest(true))
 	service.Use(middleware.ErrorHandler(service, true))
@@ -47,14 +48,14 @@ func main() {
 			"err": err,
 		}, "failed to create token manager")
 	}
-	// Middleware that extracts and stores the token in the context
+	// Middleware that extracts and stores the token in the context.
 	jwtMiddlewareTokenContext := goamiddleware.TokenContext(tokenManager, app.NewJWTSecurity())
 	service.Use(jwtMiddlewareTokenContext)
 
 	service.Use(token.InjectTokenManager(tokenManager))
 	app.UseJWTMiddleware(service, jwt.New(tokenManager.PublicKeys(), nil, app.NewJWTSecurity()))
 
-	// Mount "build-tool-detector" controller
+	// Mount "build-tool-detector" controller.
 	c := controllers.NewBuildToolDetectorController(service, *configuration)
 	app.MountBuildToolDetectorController(service, c)
 
@@ -63,8 +64,8 @@ func main() {
 
 	app.MountStatusController(service, controllers.NewStatusController(service))
 
-	// Start/mount metrics http
-	if configuration.GetPort() == configuration.GetPort() {
+	// Start/mount metrics http.
+	if configuration.GetMetricsPort() == configuration.GetPort() {
 		http.Handle("/metrics", promhttp.Handler())
 	} else {
 
@@ -74,10 +75,11 @@ func main() {
 			if err := http.ListenAndServe(metricAddress, mx); err != nil {
 				service.LogError("startup", "err", err)
 			}
-		}(":" + configuration.GetPort()) // if no port defined in config file, pick one available.
+			// If no port defined in config file, pick one available.
+		}(":" + configuration.GetMetricsPort())
 	}
 
-	// Start service
+	// Start service.
 	if err := service.ListenAndServe(":" + configuration.GetPort()); err != nil {
 		service.LogError(startup, errorz, err)
 	}
