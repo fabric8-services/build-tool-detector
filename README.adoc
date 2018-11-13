@@ -12,24 +12,6 @@ NOTE: Stick to Golang version 10 because of link:https://github.com/goadesign/go
 ----
 $ git clone https://github.com/fabric8-services/build-tool-detector $GOPATH/src/github.com/fabric8-services/build-tool-detector
 ----
-==== Setup
-* Use `config-template.yml` as a template to create your own `config.yml` file with the appropriate environment variable values.
-[source,bash]
-----
-$ cp config-template.yml config.yml
-----
-* You need to configure GH OAuth app to test it locally:
-
-1. Go to https://github.com/settings/applications/new[OAuth app]
-1. Create a new developer application, in the `Authorization callback URL`,
-1. Enter the url `http://localhost:8099`.
-
-You'll get a page with `GITHUB_CLIENT_ID` and `GITHUB_CLIENT_SECRET` that you should use in your `config.xml`:
-```
-github:
-    clientID: "GITHUB_CLIENT_ID"
-    clientSecret: "GITHUB_CLIENT_SECRET"
-```
 ==== Build
 
 [source,bash]
@@ -47,7 +29,10 @@ $ export TOKEN=XXXX
 $ curl -X GET "http://localhost:8099/api/detect/build/https%3A%2F%2Fgithub.com%2Ffabric8-launcher%2Flauncher-backend" -H "accept: application/vnd.goa.build.tool.detector+json" -H "Authorization: Bearer $TOKEN"
 {"build-tool-type":"maven"}
 ----
-where TOKEN is your JWT token taken from link:https://prod-preview.openshift.io/[OpenShift.io prod-preview]
+where:
+
+* TOKEN is your JWT token taken from link:https://prod-preview.openshift.io/[OpenShift.io prod-preview]
+* and our parameter repo is: https://github.com/fabric8-launcher/launcher-backend
 
 === Test [[test]]
 
@@ -68,3 +53,6 @@ Run the server:
 ----
 $ make run
 ----
+> NOTE: Our service's configuration uses viper. To setup dependent service like fabric8-auth prod or prod-preview,
+please check link:/config/configuration.go[configuration file] or
+set env variable like `BUILD_TOOL_DETECTOR_AUTH_URI`
