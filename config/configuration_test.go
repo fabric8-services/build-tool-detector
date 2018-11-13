@@ -1,11 +1,12 @@
 package config_test
 
 import (
+	"os"
+
 	"github.com/fabric8-services/build-tool-detector/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"gopkg.in/h2non/gock.v1"
-	"os"
 )
 
 var _ = Describe("Configuration", func() {
