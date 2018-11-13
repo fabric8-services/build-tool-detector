@@ -22,6 +22,7 @@ const (
 	githubClientSecret = "github.client.secret"
 	sentryDSN          = "sentry.dsn"
 )
+
 const (
 	defaultAuth = "https://auth.prod-preview.openshift.io"
 	defaultHost = "localhost"
