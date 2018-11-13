@@ -29,7 +29,7 @@ const (
 )
 
 const (
-	prefix       = "BUILD_TOOL_DETECTOR_"
+	prefix       = "BUILD_TOOL_DETECTOR"
 	authKeysPath = "/api/token/keys"
 )
 

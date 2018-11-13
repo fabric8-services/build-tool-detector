@@ -16,6 +16,7 @@ import (
 	. "github.com/onsi/gomega"
 	"gopkg.in/h2non/gock.v1"
 	"io/ioutil"
+	"os"
 )
 
 var _ = Describe("BuildToolDetector", func() {
@@ -122,9 +123,13 @@ var _ = Describe("BuildToolDetector", func() {
 
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
+			os.Setenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_ID", "test")
+			os.Setenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_SECRET", "test")
 			configuration = config.New()
 		})
 		AfterEach(func() {
+			os.Unsetenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_ID")
+			os.Unsetenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_SECRET")
 			gock.Off()
 		})
 		It("Recognize Unknown - Branch field populated", func() {

@@ -34,7 +34,7 @@ var _ = Describe("Configuration", func() {
 	Context("Configuration Overriden Defaults", func() {
 		var configuration *config.Configuration
 
-		BeforeSuite(func() {
+		BeforeEach(func() {
 			os.Setenv("BUILD_TOOL_DETECTOR_METRICS_PORT", "1234")
 			os.Setenv("BUILD_TOOL_DETECTOR_SERVER_PORT", "1234")
 			os.Setenv("BUILD_TOOL_DETECTOR_SERVER_HOST", "test")
@@ -42,14 +42,10 @@ var _ = Describe("Configuration", func() {
 			os.Setenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_SECRET", "test")
 			os.Setenv("BUILD_TOOL_DETECTOR_AUTH_URI", "test")
 			os.Setenv("BUILD_TOOL_DETECTOR_SENTRY_DSN", "test")
-		})
-		BeforeEach(func() {
 			configuration = config.New()
 		})
 		AfterEach(func() {
 			gock.Off()
-		})
-		AfterSuite(func() {
 			os.Unsetenv("BUILD_TOOL_DETECTOR_METRICS_PORT")
 			os.Unsetenv("BUILD_TOOL_DETECTOR_SERVER_PORT")
 			os.Unsetenv("BUILD_TOOL_DETECTOR_SERVER_HOST")
