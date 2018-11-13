@@ -18,8 +18,6 @@ const (
 	serverHost         = "server.host"
 	serverPort         = "server.port"
 	metricsPort        = "server.port"
-	githubClientID     = "github.client.id"
-	githubClientSecret = "github.client.secret"
 	sentryDSN          = "sentry.dsn"
 )
 
@@ -75,16 +73,6 @@ func (c *Configuration) GetPort() string {
 // GetMetricsPort returns the server's port.
 func (c *Configuration) GetMetricsPort() string {
 	return c.viper.GetString(metricsPort)
-}
-
-// GetGithubClientID returs the github client id.
-func (c *Configuration) GetGithubClientID() string {
-	return c.viper.GetString(githubClientID)
-}
-
-// GetGithubClientSecret returs the github client id.
-func (c *Configuration) GetGithubClientSecret() string {
-	return c.viper.GetString(githubClientSecret)
 }
 
 // GetSentryDSN returs the github client id.

@@ -173,6 +173,7 @@ generate: prebuild-check $(DESIGNS) $(GOAGEN_BIN) $(VENDOR_DIR) ## Generate GOA 
 	$(GOAGEN_BIN) app -d ${PACKAGE_NAME}/${DESIGN_DIR}
 	$(GOAGEN_BIN) controller -d ${PACKAGE_NAME}/${DESIGN_DIR} -o controllers/ --pkg controllers --app-pkg ${PACKAGE_NAME}/app
 	$(GOAGEN_BIN) gen -d ${PACKAGE_NAME}/${DESIGN_DIR} --pkg-path=github.com/fabric8-services/fabric8-common/goasupport/status --out app
+	$(GOAGEN_BIN) client -d github.com/fabric8-services/fabric8-auth/design --notool --pkg client -o auth
 	$(GOAGEN_BIN) swagger -d ${PACKAGE_NAME}/${DESIGN_DIR}
 	
 .PHONY: test 

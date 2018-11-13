@@ -22,37 +22,6 @@ import (
 
 var _ = Describe("BuildToolDetector", func() {
 
-	Context("Configuration", func() {
-		var service *goa.Service
-		var configuration *config.Configuration
-
-		BeforeEach(func() {
-			service = goa.New("build-tool-detector")
-			configuration = config.New()
-		})
-		AfterEach(func() {
-			gock.Off()
-		})
-
-		It("Configuration incorrect - No github_client_id / github_client_secret", func() {
-			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_branch.json")
-			Expect(err).Should(BeNil())
-
-			gock.New("https://api.github.com").
-				Get("/repos/fabric8-launcher/launcher-backend/branches/master").
-				Reply(404).
-				BodyString(string(bodyString))
-
-			bodyString, err = ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_repo_branch.json")
-			Expect(err).Should(BeNil())
-			gock.New("https://api.github.com").
-				Get("/repos/fabric8-launcher/launcher-backend/contents/pom.xml").
-				Reply(404).
-				BodyString(string(bodyString))
-			test.ShowBuildToolDetectorNotFound(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-launcher/launcher-backend/tree/master", nil)
-		})
-	})
-
 	Context("Internal Server Error", func() {
 		var service *goa.Service
 		var configuration *config.Configuration
@@ -60,6 +29,16 @@ var _ = Describe("BuildToolDetector", func() {
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
 			configuration = config.New()
+
+			// Mock auth service with success response
+			authBodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_auth_backend/return_token.json")
+			Expect(err).Should(BeNil())
+
+			configuration = config.New()
+			gock.New(configuration.GetAuthServiceURL()).
+				Get("/api/token").
+				Reply(200).
+				BodyString(string(authBodyString))
 		})
 		AfterEach(func() {
 			gock.Off()
@@ -68,7 +47,6 @@ var _ = Describe("BuildToolDetector", func() {
 			// Fail instead of expect- and make this a method
 			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_launcher_backend/not_found_repo_branch.json")
 			Expect(err).Should(BeNil())
-
 			gock.New("https://api.github.com").
 				Get("/repos/fabric8-launcherz/launcher-backend/branches/master").
 				Reply(404).
@@ -124,9 +102,15 @@ var _ = Describe("BuildToolDetector", func() {
 
 		BeforeEach(func() {
 			service = goa.New("build-tool-detector")
-			os.Setenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_ID", "test")
-			os.Setenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_SECRET", "test")
+			// Mock auth service with success response
+			authBodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_auth_backend/return_token.json")
+			Expect(err).Should(BeNil())
+
 			configuration = config.New()
+			gock.New(configuration.GetAuthServiceURL()).
+				Get("/api/token").
+				Reply(200).
+				BodyString(string(authBodyString))
 		})
 		AfterEach(func() {
 			os.Unsetenv("BUILD_TOOL_DETECTOR_GITHUB_CLIENT_ID")

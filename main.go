@@ -6,7 +6,6 @@ import (
 	"github.com/fabric8-services/build-tool-detector/app"
 	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/controllers"
-	"github.com/fabric8-services/build-tool-detector/domain/repository/github"
 	"github.com/fabric8-services/build-tool-detector/log"
 	"github.com/fabric8-services/fabric8-common/goamiddleware"
 	"github.com/fabric8-services/fabric8-common/token"
@@ -27,15 +26,6 @@ func main() {
 	// Get a new configuration.
 	configuration := config.New()
 
-	// If the github client id and/or github client secret are not set, fail.
-	if configuration.GetGithubClientID() == "" || configuration.GetGithubClientSecret() == "" {
-		log.Logger().
-			WithField(github.ClientID, configuration.GetGithubClientID()).
-			WithField(github.ClientSecret, configuration.GetGithubClientSecret()).
-			Fatalf(github.ErrFatalMissingGHAttributes.Error())
-	}
-
-	// Create service.
 	service := goa.New(buildToolDetector)
 
 	// Mount middleware.

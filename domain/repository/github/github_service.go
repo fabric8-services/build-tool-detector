@@ -17,15 +17,9 @@ import (
 	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/domain/types"
 	"github.com/google/go-github/github"
+	"golang.org/x/oauth2"
 )
 
-const (
-	// ClientID github client id.
-	ClientID = "GH_CLIENT_ID"
-
-	// ClientSecret github client secret.
-	ClientSecret = "GH_CLIENT_SECRET"
-)
 const (
 	master = "master"
 	tree   = "tree"
@@ -43,9 +37,6 @@ var (
 
 	// ErrResourceNotFound no resource found.
 	ErrResourceNotFound = errors.New("resource not found")
-
-	// ErrFatalMissingGHAttributes github client id and github client secret are unavailable.
-	ErrFatalMissingGHAttributes = errors.New("github client id and github client secret are unavailable")
 )
 
 // RepositoryService contains
@@ -55,8 +46,7 @@ type githubRepository struct {
 	owner        string
 	repository   string
 	branch       string
-	clientID     string
-	clientSecret string
+	token 		 string
 }
 
 // result used to send results to
@@ -68,8 +58,8 @@ type result struct {
 }
 
 // Create instantiate Github repository
-func Create(segment []string, branch *string, configuration config.Configuration) (types.RepositoryService, error) {
-	return newRepository(segment, branch, configuration)
+func Create(segment []string, branch *string, configuration config.Configuration, token string) (types.RepositoryService, error) {
+	return newRepository(segment, branch, configuration, token)
 }
 
 // DetectBuildTool gets the contents for the service.
@@ -106,7 +96,7 @@ func (g githubRepository) Branch() string {
 // struct. The attributes struct will be used
 // to make a request to github to determine
 // the build tool type.
-func newRepository(segments []string, ctxBranch *string, configuration config.Configuration) (types.RepositoryService, error) {
+func newRepository(segments []string, ctxBranch *string, configuration config.Configuration, token string) (types.RepositoryService, error) {
 	var repositoryService types.RepositoryService
 
 	// Default branch that will be used if a branch
@@ -136,8 +126,7 @@ func newRepository(segments []string, ctxBranch *string, configuration config.Co
 		owner:        segments[1],
 		repository:   segments[2],
 		branch:       branch,
-		clientID:     configuration.GetGithubClientID(),
-		clientSecret: configuration.GetGithubClientSecret(),
+		token: 		  token,
 	}
 
 	return repositoryService, nil
@@ -147,16 +136,14 @@ func newRepository(segments []string, ctxBranch *string, configuration config.Co
 // initiates making requests to github.
 func getContents(ctx context.Context, repository githubRepository) result {
 
-	// Get the github client id and github client
-	// secret if set to get better rate limits.
-	t := github.UnauthenticatedRateLimitedTransport{
-		ClientID:     repository.clientID,
-		ClientSecret: repository.clientSecret,
-	}
+	ts := oauth2.StaticTokenSource(
+		&oauth2.Token{AccessToken: repository.token},
+	)
+	tc := oauth2.NewClient(ctx, ts)
 
 	// If the github client id or github client
 	// secret are empty, we will log and fail.
-	client := github.NewClient(t.Client())
+	client := github.NewClient(tc)
 
 	_, err := getBranchRequest(ctx, client, repository)
 	if err != nil {

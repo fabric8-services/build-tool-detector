@@ -39,6 +39,7 @@ vendor/
 
 # Generated folders
 app/
+auth/
 client/
 swagger/
 tool/cli/

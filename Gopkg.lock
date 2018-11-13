@@ -50,11 +50,17 @@
   version = "v0.4.6"
 
 [[projects]]
+  name = "github.com/fabric8-services/fabric8-auth"
+  packages = ["design"]
+  revision = "f49fbf645355af271893af5d54ac1abbcdaf378f"
+
+[[projects]]
   name = "github.com/fabric8-services/fabric8-common"
   packages = [
     "configuration",
     "errors",
     "goamiddleware",
+    "goasupport",
     "goasupport/status",
     "httpsupport",
     "log",
@@ -279,7 +285,7 @@
     "internal/bitbucket.org/ww/goautoneg",
     "model"
   ]
-  revision = "7e9e6cabbd393fc208072eedef99188d0ce788b6"
+  revision = "a04bd04888af6ea6f64ed14244d9bcf2b739ebd6"
 
 [[projects]]
   branch = "master"
@@ -357,24 +363,35 @@
     "ed25519/internal/edwards25519",
     "pbkdf2"
   ]
-  revision = "4d3f4d9ffa16a13f451c3b2999e9c49e9750bf06"
+  revision = "3d3f9f413869b949e48070b5bc593aa22cc2b8f2"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/net"
   packages = [
+    "context",
+    "context/ctxhttp",
     "html",
     "html/atom",
     "html/charset",
     "websocket"
   ]
-  revision = "c10e9556a7bc0e7c942242b606f0acf024ad5d6a"
+  revision = "03003ca0c849e57b6ea29a4bab8d3cb6e4d568fe"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/oauth2"
+  packages = [
+    ".",
+    "internal"
+  ]
+  revision = "f42d05182288abf10faef86d16c0d07b8d40ea2d"
 
 [[projects]]
   branch = "master"
   name = "golang.org/x/sys"
   packages = ["unix"]
-  revision = "9b800f95dbbc54abff0acf7ee32d88ba4e328c89"
+  revision = "66b7b1311ac80bbafcd2daeef9a5e6e2cd1e2399"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -407,7 +424,21 @@
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "96e9e165b75e735822645eff82850b08c377be36"
+  revision = "a8570e12b66263a4d2bc406de590d7651e494615"
+
+[[projects]]
+  name = "google.golang.org/appengine"
+  packages = [
+    "internal",
+    "internal/base",
+    "internal/datastore",
+    "internal/log",
+    "internal/remote_api",
+    "internal/urlfetch",
+    "urlfetch"
+  ]
+  revision = "4a4468ece617fc8205e99368fa2200e9d1fad421"
+  version = "v1.3.0"
 
 [[projects]]
   name = "gopkg.in/fsnotify.v1"
@@ -447,6 +478,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "8fb1550f9db4f0f87da6f2812746112e4c2a16968197bd8e0e1cd567a1d2f149"
+  inputs-digest = "cc27807ce6684260d0379da6411b4526ca3c26778aeb5843075b6d8636326308"
   solver-name = "gps-cdcl"
   solver-version = 1
