@@ -27,6 +27,7 @@ var _ = Describe("Configuration", func() {
 			Expect(configuration.GetAuthServiceURL()).Should(Equal("https://auth.prod-preview.openshift.io"), "the auth url should default to https://auth.prod-preview.openshift.io")
 			Expect(configuration.GetSentryDSN()).Should(Equal(""), "the sentry dsn should default to empty")
 			Expect(configuration.GetAuthKeysPath()).Should(Equal("/api/token/keys"), "the sentry dsn should return /api/token/keys")
+			Expect(configuration.GetScm()).Should(Equal("github"), "the sentry dsn should default to github")
 		})
 	})
 
@@ -39,6 +40,7 @@ var _ = Describe("Configuration", func() {
 			os.Setenv("BUILD_TOOL_DETECTOR_SERVER_HOST", "test")
 			os.Setenv("BUILD_TOOL_DETECTOR_AUTH_URI", "test")
 			os.Setenv("BUILD_TOOL_DETECTOR_SENTRY_DSN", "test")
+			os.Setenv("BUILD_TOOL_DETECTOR_SCM", "gitlab")
 			configuration = config.New()
 		})
 		AfterEach(func() {
@@ -48,13 +50,15 @@ var _ = Describe("Configuration", func() {
 			os.Unsetenv("BUILD_TOOL_DETECTOR_SERVER_HOST")
 			os.Unsetenv("BUILD_TOOL_DETECTOR_AUTH_URI")
 			os.Unsetenv("BUILD_TOOL_DETECTOR_SENTRY_DSN")
+			os.Unsetenv("BUILD_TOOL_DETECTOR_SCM")
 		})
-		It("Configuration defaults - test defaults are set", func() {
-			Expect(configuration.GetHost()).Should(Equal("test"), "the host should default to test")
-			Expect(configuration.GetPort()).Should(Equal("1234"), "the port should default to 1234")
-			Expect(configuration.GetMetricsPort()).Should(Equal("1234"), "the metrics port should default to 1234")
-			Expect(configuration.GetAuthServiceURL()).Should(Equal("test"), "the auth url should default to test")
-			Expect(configuration.GetSentryDSN()).Should(Equal("test"), "the sentry dsn should default to test")
+		It("Configuration defaults - test defaults are overriden", func() {
+			Expect(configuration.GetHost()).Should(Equal("test"), "the host should override to test")
+			Expect(configuration.GetPort()).Should(Equal("1234"), "the port should override to 1234")
+			Expect(configuration.GetMetricsPort()).Should(Equal("1234"), "the metrics port should override to 1234")
+			Expect(configuration.GetAuthServiceURL()).Should(Equal("test"), "the auth url should override to test")
+			Expect(configuration.GetSentryDSN()).Should(Equal("test"), "the sentry dsn should override to test")
+			Expect(configuration.GetScm()).Should(Equal("gitlab"), "the scm should override to to gitlab")
 		})
 	})
 })

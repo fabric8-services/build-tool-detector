@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strings"
 	"github.com/fabric8-services/build-tool-detector/app"
 	"github.com/fabric8-services/build-tool-detector/auth/client"
 	"github.com/fabric8-services/build-tool-detector/config"
@@ -79,7 +80,11 @@ func (c *BuildToolDetectorController) Show(ctx *app.ShowBuildToolDetectorContext
 		log.Logger().Info(ctx, nil, "no token in context")
 	}
 	tr := tokenRetriever{authClient: authClient, context: ctx}
-	token, err := tr.tokenForService("https://github.com")
+	scm, err := c.getScm(ctx)
+	if err != nil {
+		return handleError(ctx, err)
+	}
+	token, err := tr.tokenForService(*scm)
 	if err != nil {
 		return handleError(ctx, err)
 	}
@@ -143,6 +148,18 @@ func handleError(ctx *app.ShowBuildToolDetectorContext, err error) error {
 	default:
 		return ctx.InternalServerError()
 	}
+}
+
+// getScm get the source control management system used from configuration.
+func (c *BuildToolDetectorController) getScm(ctx *app.ShowBuildToolDetectorContext) (*string, error) {
+	value := c.Configuration.GetScm()
+	if strings.ToLower(value) != "github" {
+		err := errors.New("only GitHub scm supported")
+		log.Logger().WithError(err)
+		return nil, err
+	}
+	scm := fmt.Sprintf("http://%s.com", c.Configuration.GetScm())
+	return &scm, nil
 }
 
 // formatResponse writes the header
