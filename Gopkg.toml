@@ -29,7 +29,6 @@ required = [
     "github.com/fabric8-services/fabric8-common/token",
     "github.com/fabric8-services/fabric8-common/log",
     "github.com/fabric8-services/fabric8-common/goasupport",
-    "github.com/fabric8-services/fabric8-auth/design",
     "github.com/goadesign/goa/cors",
     "github.com/goadesign/goa/design",
     "github.com/goadesign/goa/encoding/form",
@@ -84,8 +83,8 @@ required = [
   revision = "45960af9689499e9f5e5a4ebd142a8189a19ca1e"
 
 [[constraint]]
-  name = "github.com/fabric8-services/fabric8-auth"
-  revision = "f49fbf645355af271893af5d54ac1abbcdaf378f"
+  name = "github.com/fabric8-services/fabric8-auth-client"
+  revision = "0eb93fc6cee1e202cb0f3ade92e99a2423b49283"
 
 # Apply workaround from https://github.com/golang/dep/issues/1799
 [[override]]

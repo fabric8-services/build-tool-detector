@@ -50,9 +50,9 @@
   version = "v0.4.6"
 
 [[projects]]
-  name = "github.com/fabric8-services/fabric8-auth"
-  packages = ["design"]
-  revision = "f49fbf645355af271893af5d54ac1abbcdaf378f"
+  name = "github.com/fabric8-services/fabric8-auth-client"
+  packages = ["auth"]
+  revision = "0eb93fc6cee1e202cb0f3ade92e99a2423b49283"
 
 [[projects]]
   name = "github.com/fabric8-services/fabric8-common"
@@ -285,7 +285,7 @@
     "internal/bitbucket.org/ww/goautoneg",
     "model"
   ]
-  revision = "a04bd04888af6ea6f64ed14244d9bcf2b739ebd6"
+  revision = "41aa239b4cce3c56ab88fc366ae8b0a6423fa239"
 
 [[projects]]
   branch = "master"
@@ -376,7 +376,7 @@
     "html/charset",
     "websocket"
   ]
-  revision = "03003ca0c849e57b6ea29a4bab8d3cb6e4d568fe"
+  revision = "88d92db4c548972d942ac2a3531a8a9a34c82ca6"
 
 [[projects]]
   branch = "master"
@@ -424,7 +424,7 @@
   branch = "master"
   name = "golang.org/x/tools"
   packages = ["go/ast/astutil"]
-  revision = "a8570e12b66263a4d2bc406de590d7651e494615"
+  revision = "99072bc9d7ade6fc470d6c040de25d2edeac78c4"
 
 [[projects]]
   name = "google.golang.org/appengine"
@@ -450,8 +450,8 @@
 [[projects]]
   name = "gopkg.in/h2non/gock.v1"
   packages = ["."]
-  revision = "150f03e9bc914db1ba8c2a91c8985d4f21dd6005"
-  version = "v1.0.11"
+  revision = "a6029d17e101ac1594adafea9e63fd8c988a8701"
+  version = "v1.0.12"
 
 [[projects]]
   name = "gopkg.in/square/go-jose.v2"
@@ -478,6 +478,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "cc27807ce6684260d0379da6411b4526ca3c26778aeb5843075b6d8636326308"
+  inputs-digest = "aee4c658479b17b017d2c32d66c64ac39850868a0e6cf6917a480c0f52f44f3e"
   solver-name = "gps-cdcl"
   solver-version = 1

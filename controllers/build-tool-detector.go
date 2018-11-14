@@ -14,7 +14,7 @@ import (
 	"fmt"
 	"strings"
 	"github.com/fabric8-services/build-tool-detector/app"
-	"github.com/fabric8-services/build-tool-detector/auth/client"
+	client "github.com/fabric8-services/fabric8-auth-client/auth"
 	"github.com/fabric8-services/build-tool-detector/config"
 	errs "github.com/fabric8-services/build-tool-detector/controllers/error"
 	"github.com/fabric8-services/build-tool-detector/domain/repository"
