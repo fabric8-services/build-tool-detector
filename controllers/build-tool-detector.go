@@ -19,8 +19,8 @@ import (
 	"github.com/fabric8-services/build-tool-detector/domain/repository"
 	"github.com/fabric8-services/build-tool-detector/domain/repository/github"
 	"github.com/fabric8-services/build-tool-detector/domain/types"
+	"github.com/fabric8-services/build-tool-detector/log"
 	"github.com/fabric8-services/fabric8-common/goasupport"
-	"github.com/fabric8-services/fabric8-common/log"
 	"github.com/goadesign/goa"
 	goaclient "github.com/goadesign/goa/client"
 	goajwt "github.com/goadesign/goa/middleware/security/jwt"
@@ -43,50 +43,6 @@ const (
 	applicationJSON             = "application/json"
 	buildToolDetectorController = "BuildToolDetectorController"
 )
-
-type tokenRetriever struct {
-	authClient *client.Client
-	context    *app.ShowBuildToolDetectorContext
-}
-
-// TokenForService calls auth service to retrieve a token for an external service (ie: GitHub).
-func (tr *tokenRetriever) tokenForService(forService string) (*string, error) {
-
-	resp, err := tr.authClient.RetrieveToken(goasupport.ForwardContextRequestID(tr.context), client.RetrieveTokenPath(), forService, nil)
-	if err != nil {
-		return nil, handleError(tr.context , err)
-	}
-
-	defer resp.Body.Close()
-
-	respBody, err := ioutil.ReadAll(resp.Body)
-
-	status := resp.StatusCode
-	if status != http.StatusOK {
-		log.Error(nil, map[string]interface{}{
-			"err":          err,
-			"request_path": client.ShowUserPath(),
-			"for_service":  forService,
-			"http_status":  status,
-		}, "failed to GET token from auth service due to HTTP error %s", status)
-		return nil, handleError(tr.context , err)
-	}
-
-	var respType client.TokenData
-	err = json.Unmarshal(respBody, &respType)
-	if err != nil {
-		log.Error(nil, map[string]interface{}{
-			"err":           err,
-			"request_path":  client.ShowUserPath(),
-			"for_service":   forService,
-			"http_status":   status,
-			"response_body": respBody,
-		}, "unable to unmarshal Auth token")
-		return nil, handleError(tr.context , err)
-	}
-
-	return respType.AccessToken, nil
-}
 
 // BuildToolDetectorController implements the build-tool-detector resource.
 type BuildToolDetectorController struct {
@@ -120,7 +76,7 @@ func (c *BuildToolDetectorController) Show(ctx *app.ShowBuildToolDetectorContext
 	if goajwt.ContextJWT(ctx) != nil {
 		authClient.SetJWTSigner(goasupport.NewForwardSigner(ctx))
 	} else {
-		log.Info(ctx, nil, "no token in context")
+		log.Logger().Info(ctx, nil, "no token in context")
 	}
 	tr := tokenRetriever{authClient: authClient, context: ctx}
 	token, err := tr.tokenForService("https://github.com")
@@ -204,4 +160,48 @@ func formatResponse(ctx *app.ShowBuildToolDetectorContext, httpTypeError *errs.H
 		return ctx.InternalServerError()
 	}
 	return nil
+}
+
+type tokenRetriever struct {
+	authClient *client.Client
+	context    *app.ShowBuildToolDetectorContext
+}
+
+// tokenForService calls auth service to retrieve a token for an external service (ie: GitHub).
+func (tr *tokenRetriever) tokenForService(forService string) (*string, error) {
+
+	resp, err := tr.authClient.RetrieveToken(goasupport.ForwardContextRequestID(tr.context), client.RetrieveTokenPath(), forService, nil)
+	if err != nil {
+		return nil, handleError(tr.context , err)
+	}
+
+	defer resp.Body.Close()
+
+	respBody, err := ioutil.ReadAll(resp.Body)
+
+	status := resp.StatusCode
+	if status != http.StatusOK {
+		log.Logger().Error(nil, map[string]interface{}{
+			"err":          err,
+			"request_path": client.ShowUserPath(),
+			"for_service":  forService,
+			"http_status":  status,
+		}, "failed to GET token from auth service due to HTTP error %s", status)
+		return nil, handleError(tr.context , err)
+	}
+
+	var respType client.TokenData
+	err = json.Unmarshal(respBody, &respType)
+	if err != nil {
+		log.Logger().Error(nil, map[string]interface{}{
+			"err":           err,
+			"request_path":  client.ShowUserPath(),
+			"for_service":   forService,
+			"http_status":   status,
+			"response_body": respBody,
+		}, "unable to unmarshal Auth token")
+		return nil, handleError(tr.context , err)
+	}
+
+	return respType.AccessToken, nil
 }
