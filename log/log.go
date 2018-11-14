@@ -28,7 +28,7 @@ const (
 
 // Logger something
 func Logger() *logrus.Entry {
-	var configuration config.Configuration
+	configuration := config.New()
 	logrus.SetFormatter(&logrus.JSONFormatter{})
 	logrus.SetLevel(logrus.WarnLevel)
 
