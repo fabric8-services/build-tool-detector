@@ -12,13 +12,22 @@ maven.
 package repository
 
 import (
-	"errors"
+	"context"
+	"fmt"
+	"github.com/pkg/errors"
+	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/fabric8-services/build-tool-detector/config"
+	tr "github.com/fabric8-services/build-tool-detector/domain/token"
 	"github.com/fabric8-services/build-tool-detector/domain/repository/github"
 	"github.com/fabric8-services/build-tool-detector/domain/types"
+	client "github.com/fabric8-services/fabric8-auth-client/auth"
+	"github.com/fabric8-services/fabric8-common/goasupport"
+	goaclient "github.com/goadesign/goa/client"
+	goajwt "github.com/goadesign/goa/middleware/security/jwt"
+	"github.com/fabric8-services/build-tool-detector/log"
 )
 
 var (
@@ -37,7 +46,7 @@ const (
 //
 // Note: This method will likely need to be enhanced
 // to handle different github url formats.
-func CreateService(urlToParse string, branch *string, configuration config.Configuration, token string) (types.RepositoryService, error) {
+func CreateService(ctx *context.Context, urlToParse string, branch *string, configuration config.Configuration) (types.RepositoryService, error) {
 
 	u, err := url.Parse(urlToParse)
 
@@ -56,5 +65,26 @@ func CreateService(urlToParse string, branch *string, configuration config.Confi
 		return nil, github.ErrUnsupportedGithubURL
 	}
 
-	return github.Create(urlSegments, branch, configuration, token)
+	url, err := url.Parse(configuration.GetAuthServiceURL())
+	if err != nil {
+		return nil, errors.Wrap(err, "auth service url not found")
+	}
+
+	authClient := client.New(goaclient.HTTPClientDoer(http.DefaultClient))
+	authClient.Host = url.Host
+	authClient.Scheme = url.Scheme
+	if goajwt.ContextJWT(*ctx) != nil {
+		authClient.SetJWTSigner(goasupport.NewForwardSigner(*ctx))
+	} else {
+		log.Logger().Info(ctx, nil, "no token in context")
+	}
+	tokenRetriever := tr.TokenRetriever{AuthClient: authClient, Context: ctx}
+	token, err := tokenRetriever.TokenForService(fmt.Sprintf("https://%s", githubHost))
+	if err != nil {
+		return nil, errors.Wrap(err, "auth service url not found")
+	}
+	if token == nil {
+		return nil, errors.Wrap(err, "token not found for GitHub")
+	}
+	return github.Create(urlSegments, branch, configuration, *token)
 }
