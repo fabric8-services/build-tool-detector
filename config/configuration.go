@@ -25,7 +25,6 @@ const (
 	defaultAuth = "https://auth.prod-preview.openshift.io"
 	defaultHost = "localhost"
 	defaultPort = "8099"
-	defaultScm  = "github"
 )
 
 const (

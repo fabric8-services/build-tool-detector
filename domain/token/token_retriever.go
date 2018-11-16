@@ -2,17 +2,17 @@ package token
 
 import (
 	"context"
-	"fmt"
-	"github.com/pkg/errors"
-	"io/ioutil"
-	"net/http"
 	"encoding/json"
+	"fmt"
 	"github.com/fabric8-services/build-tool-detector/config"
-	client "github.com/fabric8-services/fabric8-auth-client/auth"
 	"github.com/fabric8-services/build-tool-detector/log"
+	client "github.com/fabric8-services/fabric8-auth-client/auth"
 	"github.com/fabric8-services/fabric8-common/goasupport"
 	goaclient "github.com/goadesign/goa/client"
 	goajwt "github.com/goadesign/goa/middleware/security/jwt"
+	"github.com/pkg/errors"
+	"io/ioutil"
+	"net/http"
 	"net/url"
 )
 
@@ -75,7 +75,7 @@ func GetGitHubToken(ctx *context.Context, configuration config.Configuration) (*
 	forService := fmt.Sprintf("%s%s://%s", authClient.Host, authClient.Scheme, githubHost)
 	token, err := tokenForService(ctx, authClient, forService)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to retrieve auth token")
+		return nil, errors.Wrap(err, "failed to retrieve token from auth")
 	}
 	return token, nil
 }

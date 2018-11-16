@@ -19,8 +19,8 @@ import (
 
 	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/domain/repository/github"
-	"github.com/fabric8-services/build-tool-detector/domain/types"
 	"github.com/fabric8-services/build-tool-detector/domain/token"
+	"github.com/fabric8-services/build-tool-detector/domain/types"
 )
 
 var (
@@ -60,10 +60,10 @@ func CreateService(ctx *context.Context, urlToParse string, branch *string, conf
 
     tk, err:= token.GetGitHubToken(ctx, configuration)
 	if err != nil {
-		return nil, errors.Wrap(err, "auth service url not found")
+		return nil, errors.Wrap(err, "failed to retrieve token from auth")
 	}
 	if tk == nil {
-		return nil, errors.Wrap(err, "token not found for GitHub")
+		return nil, errors.Wrap(err, "failed to retrieve token from auth")
 	}
 	return github.Create(urlSegments, branch, configuration, *tk)
 }
