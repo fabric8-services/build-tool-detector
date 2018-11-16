@@ -1,3 +1,9 @@
+/*
+
+Package token implements the logic to retrieve external
+providers' token using auth service.
+
+*/
 package token
 
 import (
@@ -32,13 +38,14 @@ func tokenForService(ctx *context.Context, authClient *client.Client, forService
 
 	status := resp.StatusCode
 	if status != http.StatusOK {
+		err := errors.New("failed to GET token from auth service due to HTTP error")
 		log.Logger().Error(nil, map[string]interface{}{
 			"err":          err,
 			"request_path": client.ShowUserPath(),
 			"for_service":  forService,
 			"http_status":  status,
 		}, "failed to GET token from auth service due to HTTP error %s", status)
-		return nil, errors.Wrap(err, "failed to GET token from auth service due to HTTP error")
+		return nil, err
 	}
 
 	var respType client.TokenData
