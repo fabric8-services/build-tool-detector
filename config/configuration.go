@@ -14,11 +14,11 @@ import (
 )
 
 const (
-	authURI            = "auth.uri"
-	serverHost         = "server.host"
-	serverPort         = "server.port"
-	metricsPort        = "server.port"
-	sentryDSN          = "sentry.dsn"
+	authURI     = "auth.uri"
+	serverHost  = "server.host"
+	serverPort  = "server.port"
+	metricsPort = "server.port"
+	sentryDSN   = "sentry.dsn"
 )
 
 const (

@@ -10,19 +10,17 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/fabric8-services/build-tool-detector/config"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+
 	"github.com/fabric8-services/build-tool-detector/log"
 	client "github.com/fabric8-services/fabric8-auth-client/auth"
 	"github.com/fabric8-services/fabric8-common/goasupport"
 	goaclient "github.com/goadesign/goa/client"
 	goajwt "github.com/goadesign/goa/middleware/security/jwt"
 	"github.com/pkg/errors"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 )
-
-const githubHost = "github.com"
 
 // TokenForService calls auth service to retrieve a token for an external service (ie: GitHub).
 func tokenForService(ctx *context.Context, authClient *client.Client, forService string) (*string, error) {
@@ -65,8 +63,8 @@ func tokenForService(ctx *context.Context, authClient *client.Client, forService
 }
 
 // GetGitHubToken retrieve GitHub token associated to given openshift.io token using auth service.
-func GetGitHubToken(ctx *context.Context, configuration config.Configuration) (*string, error) {
-	url, err := url.Parse(configuration.GetAuthServiceURL())
+func GetGitHubToken(ctx *context.Context, authServiceURL string, u *url.URL) (*string, error) {
+	url, err := url.Parse(authServiceURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "auth service url not found")
 	}
@@ -79,7 +77,7 @@ func GetGitHubToken(ctx *context.Context, configuration config.Configuration) (*
 		log.Logger().Info(ctx, nil, "no token in context")
 	}
 
-	forService := fmt.Sprintf("%s%s://%s", authClient.Host, authClient.Scheme, githubHost)
+	forService := fmt.Sprintf("%s://%s", u.Scheme, u.Host)
 	token, err := tokenForService(ctx, authClient, forService)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to retrieve token from auth")

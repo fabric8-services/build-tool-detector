@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	"github.com/fabric8-services/build-tool-detector/app"
 	"github.com/fabric8-services/build-tool-detector/config"
 	errs "github.com/fabric8-services/build-tool-detector/controllers/error"
@@ -46,7 +47,7 @@ type BuildToolDetectorController struct {
 // NewBuildToolDetectorController creates a build-tool-detector controller.
 func NewBuildToolDetectorController(service *goa.Service, configuration config.Configuration) *BuildToolDetectorController {
 	return &BuildToolDetectorController{
-		Controller: service.NewController(buildToolDetectorController),
+		Controller:    service.NewController(buildToolDetectorController),
 		Configuration: configuration,
 	}
 }
