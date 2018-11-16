@@ -19,7 +19,6 @@ const (
 	serverPort         = "server.port"
 	metricsPort        = "server.port"
 	sentryDSN          = "sentry.dsn"
-	scm 			   = "scm"
 )
 
 const (
@@ -82,11 +81,6 @@ func (c *Configuration) GetSentryDSN() string {
 	return c.viper.GetString(sentryDSN)
 }
 
-// GetScm provides the source control management system used.
-func (c *Configuration) GetScm() string {
-	return c.viper.GetString(scm)
-}
-
 // GetAuthKeysPath provides a URL path to be called for retrieving the keys.
 func (c *Configuration) GetAuthKeysPath() string {
 	// Fixed with https://github.com/fabric8-services/fabric8-common/pull/25.
@@ -105,5 +99,4 @@ func (c *Configuration) setConfigDefaults() {
 	c.viper.SetDefault(serverHost, defaultHost)
 	c.viper.SetDefault(serverPort, defaultPort)
 	c.viper.SetDefault(metricsPort, defaultPort)
-	c.viper.SetDefault(scm, defaultScm)
 }

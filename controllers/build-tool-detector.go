@@ -20,7 +20,6 @@ import (
 	"github.com/fabric8-services/build-tool-detector/domain/types"
 	"github.com/fabric8-services/build-tool-detector/log"
 	"github.com/goadesign/goa"
-	"net/http"
 )
 
 var (
@@ -42,7 +41,6 @@ const (
 type BuildToolDetectorController struct {
 	*goa.Controller
 	config.Configuration
-	httpClient *http.Client
 }
 
 // NewBuildToolDetectorController creates a build-tool-detector controller.

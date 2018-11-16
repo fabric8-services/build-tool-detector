@@ -2,25 +2,26 @@ package token
 
 import (
 	"context"
+	"fmt"
 	"github.com/pkg/errors"
 	"io/ioutil"
 	"net/http"
 	"encoding/json"
+	"github.com/fabric8-services/build-tool-detector/config"
 	client "github.com/fabric8-services/fabric8-auth-client/auth"
 	"github.com/fabric8-services/build-tool-detector/log"
 	"github.com/fabric8-services/fabric8-common/goasupport"
+	goaclient "github.com/goadesign/goa/client"
+	goajwt "github.com/goadesign/goa/middleware/security/jwt"
+	"net/url"
 )
 
-// TokenRetriever is used to query auth service and retrieve external providers' token.
-type TokenRetriever struct {
-	AuthClient *client.Client
-	Context    *context.Context
-}
+const githubHost = "github.com"
 
 // TokenForService calls auth service to retrieve a token for an external service (ie: GitHub).
-func (tr *TokenRetriever) TokenForService(forService string) (*string, error) {
+func tokenForService(ctx *context.Context, authClient *client.Client, forService string) (*string, error) {
 
-	resp, err := tr.AuthClient.RetrieveToken(goasupport.ForwardContextRequestID(*tr.Context), client.RetrieveTokenPath(), forService, nil)
+	resp, err := authClient.RetrieveToken(goasupport.ForwardContextRequestID(*ctx), client.RetrieveTokenPath(), forService, nil)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to retrieve token")
 	}
@@ -54,4 +55,27 @@ func (tr *TokenRetriever) TokenForService(forService string) (*string, error) {
 	}
 
 	return respType.AccessToken, nil
+}
+
+// GetGitHubToken retrieve GitHub token associated to given openshift.io token using auth service.
+func GetGitHubToken(ctx *context.Context, configuration config.Configuration) (*string, error) {
+	url, err := url.Parse(configuration.GetAuthServiceURL())
+	if err != nil {
+		return nil, errors.Wrap(err, "auth service url not found")
+	}
+	authClient := client.New(goaclient.HTTPClientDoer(http.DefaultClient))
+	authClient.Host = url.Host
+	authClient.Scheme = url.Scheme
+	if goajwt.ContextJWT(*ctx) != nil {
+		authClient.SetJWTSigner(goasupport.NewForwardSigner(*ctx))
+	} else {
+		log.Logger().Info(ctx, nil, "no token in context")
+	}
+
+	forService := fmt.Sprintf("%s%s://%s", authClient.Host, authClient.Scheme, githubHost)
+	token, err := tokenForService(ctx, authClient, forService)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to retrieve auth token")
+	}
+	return token, nil
 }
