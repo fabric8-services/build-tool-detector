@@ -58,7 +58,7 @@ func CreateService(ctx *context.Context, urlToParse string, branch *string, conf
 		return nil, github.ErrUnsupportedGithubURL
 	}
 
-    tk, err:= token.GetGitHubToken(ctx, configuration)
+	tk, err := token.GetGitHubToken(ctx, configuration.GetAuthServiceURL(), u.Host())
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to retrieve token from auth")
 	}

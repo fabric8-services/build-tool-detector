@@ -58,8 +58,8 @@ func tokenForService(ctx *context.Context, authClient *client.Client, forService
 }
 
 // GetGitHubToken retrieve GitHub token associated to given openshift.io token using auth service.
-func GetGitHubToken(ctx *context.Context, configuration config.Configuration) (*string, error) {
-	url, err := url.Parse(configuration.GetAuthServiceURL())
+func GetGitHubToken(ctx *context.Context, authServiceURL string, host string) (*string, error) {
+	url, err := url.Parse(authServiceURL)
 	if err != nil {
 		return nil, errors.Wrap(err, "auth service url not found")
 	}
@@ -72,7 +72,7 @@ func GetGitHubToken(ctx *context.Context, configuration config.Configuration) (*
 		log.Logger().Info(ctx, nil, "no token in context")
 	}
 
-	forService := fmt.Sprintf("%s%s://%s", authClient.Host, authClient.Scheme, githubHost)
+	forService := fmt.Sprintf("%s%s://%s", authClient.Host, authClient.Scheme, host)
 	token, err := tokenForService(ctx, authClient, forService)
 	if err != nil {
 		return nil, errors.Wrap(err, "failed to retrieve token from auth")
