@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/fabric8-services/build-tool-detector/config"
 	"github.com/fabric8-services/build-tool-detector/log"
 	client "github.com/fabric8-services/fabric8-auth-client/auth"
 	"github.com/fabric8-services/fabric8-common/goasupport"
@@ -15,8 +14,6 @@ import (
 	"net/http"
 	"net/url"
 )
-
-const githubHost = "github.com"
 
 // TokenForService calls auth service to retrieve a token for an external service (ie: GitHub).
 func tokenForService(ctx *context.Context, authClient *client.Client, forService string) (*string, error) {
