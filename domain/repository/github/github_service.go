@@ -43,10 +43,10 @@ var (
 // values pertaining to a github
 // repository.
 type githubRepository struct {
-	owner        string
-	repository   string
-	branch       string
-	token 		 string
+	owner      string
+	repository string
+	branch     string
+	token      string
 }
 
 // result used to send results to
@@ -123,10 +123,10 @@ func newRepository(segments []string, ctxBranch *string, configuration config.Co
 	}
 
 	repositoryService = githubRepository{
-		owner:        segments[1],
-		repository:   segments[2],
-		branch:       branch,
-		token: 		  token,
+		owner:      segments[1],
+		repository: segments[2],
+		branch:     branch,
+		token:      token,
 	}
 
 	return repositoryService, nil

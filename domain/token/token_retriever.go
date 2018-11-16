@@ -4,15 +4,16 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
+
 	"github.com/fabric8-services/build-tool-detector/log"
 	client "github.com/fabric8-services/fabric8-auth-client/auth"
 	"github.com/fabric8-services/fabric8-common/goasupport"
 	goaclient "github.com/goadesign/goa/client"
 	goajwt "github.com/goadesign/goa/middleware/security/jwt"
 	"github.com/pkg/errors"
-	"io/ioutil"
-	"net/http"
-	"net/url"
 )
 
 // TokenForService calls auth service to retrieve a token for an external service (ie: GitHub).
