@@ -22,6 +22,7 @@ DOCKER_BUILD_DIR := $(WORKSPACE)/$(PROJECT_NAME)-build
 # to reflect jenkins-${JOB_NAME}-${BUILD_NUMBER}
 BUILD_TAG ?= $(PROJECT_NAME)-local-build
 DOCKER_CONTAINER_NAME := $(BUILD_TAG)
+USE_GO_VERSION_FROM_WEBSITE ?= 1
 
 # Where is the GOPATH inside the build container?
 GOPATH_IN_CONTAINER=/tmp/go
