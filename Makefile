@@ -9,15 +9,15 @@ SOURCES := $(shell find $(SOURCE_DIR) -path $(SOURCE_DIR)/vendor -prune -o -name
 DESIGN_DIR=design
 DESIGNS := $(shell find $(SOURCE_DIR)/$(DESIGN_DIR) -path $(SOURCE_DIR)/vendor -prune -o -name '*.go' -print)
 
+# This pattern excludes the listed folders while running tests
+TEST_PKGS_EXCLUDE_PATTERN = "vendor\|app$\|tool\/build-tool-detector-cli\|design\|client\|test"
+
 include ./.make/docker.mk
 ifeq ($(OS),Windows_NT)
 include ./.make/Makefile.win
 else
 include ./.make/Makefile.lnx
 endif
-
-
-
 
 # This is a fix for a non-existing user in passwd file when running in a docker
 # container and trying to clone repos of dependencies
@@ -177,7 +177,8 @@ generate: prebuild-check $(DESIGNS) $(GOAGEN_BIN) $(VENDOR_DIR) ## Generate GOA 
 	
 .PHONY: test 
 test: test-deps  ## Executes all tests
-	$(GINKGO_BIN) -r
+	$(eval TEST_PACKAGES:=$(shell go list ./... | grep -v $(TEST_PKGS_EXCLUDE_PATTERN)))
+	go test -vet off $(TEST_PACKAGES) -v
 
 .PHONY: format ## Removes unneeded imports and formats source code
 format: 
