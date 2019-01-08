@@ -78,8 +78,8 @@ func handleSuccess(buildToolType string) *app.GoaBuildToolDetector {
 		return types.NewMaven()
 	case types.NodeJS:
 		return types.NewNodeJS()
-	case types.Unknown:
-		return types.NewUnknown()
+	case types.Golang:
+		return types.NewGolang()
 	default:
 		return types.NewUnknown()
 	}

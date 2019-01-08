@@ -213,5 +213,25 @@ var _ = Describe("BuildToolDetector", func() {
 			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-ui/fabric8-ui/tree/master", nil)
 			Expect(buildTool.BuildToolType).Should(Equal("nodejs"), "buildTool should be nodejs")
 		})
+
+		It("Recognize Golang - Branch included in URL", func() {
+			bodyString, err := ioutil.ReadFile("../controllers/test/mock/fabric8_wit/ok_branch.json")
+			Expect(err).Should(BeNil())
+
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-services/fabric8-wit/branches/master").
+				Reply(200).
+				BodyString(string(bodyString))
+
+			bodyString, err = ioutil.ReadFile("../controllers/test/mock/fabric8_wit/ok_contents.json")
+			Expect(err).Should(BeNil())
+			gock.New("https://api.github.com").
+				Get("/repos/fabric8-services/fabric8-wit/contents/main.go").
+				Reply(200).
+				BodyString(string(bodyString))
+			_, buildTool := test.ShowBuildToolDetectorOK(GinkgoT(), nil, nil, controllers.NewBuildToolDetectorController(service, *configuration), "https://github.com/fabric8-services/fabric8-wit/tree/master", nil)
+			Expect(buildTool.BuildToolType).Should(Equal("golang"), "buildTool should be golang")
+		})
+
 	})
 })
