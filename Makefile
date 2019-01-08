@@ -10,7 +10,7 @@ DESIGN_DIR=design
 DESIGNS := $(shell find $(SOURCE_DIR)/$(DESIGN_DIR) -path $(SOURCE_DIR)/vendor -prune -o -name '*.go' -print)
 
 # This pattern excludes the listed folders while running tests
-TEST_PKGS_EXCLUDE_PATTERN = "vendor\|app$\|tool\/build-tool-detector-cli\|design\|client\|test"
+TEST_PKGS_EXCLUDE_PATTERN = "vendor|app|tool\/build-tool-detector-cli|design|client|test"
 
 include ./.make/docker.mk
 ifeq ($(OS),Windows_NT)
