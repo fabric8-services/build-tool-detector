@@ -177,7 +177,7 @@ generate: prebuild-check $(DESIGNS) $(GOAGEN_BIN) $(VENDOR_DIR) ## Generate GOA 
 	
 .PHONY: test 
 test: test-deps  ## Executes all tests
-	$(eval TEST_PACKAGES:=$(shell go list ./... | grep -v $(TEST_PKGS_EXCLUDE_PATTERN)))
+	$(eval TEST_PACKAGES:=$(shell go list ./... | grep -v -E $(TEST_PKGS_EXCLUDE_PATTERN)))
 	go test -vet off $(TEST_PACKAGES) -v
 
 .PHONY: format ## Removes unneeded imports and formats source code
