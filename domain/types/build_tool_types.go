@@ -36,6 +36,10 @@ const (
 	NodeJS      = "nodejs"
 	packageJSON = "package.json"
 
+	// Golang build type detected golang.
+	Golang   = "golang"
+	mainFile = "main.go"
+
 	// Unknown build type detected Unknown.
 	Unknown = "unknown"
 )
@@ -64,6 +68,15 @@ func NewNodeJS() *app.GoaBuildToolDetector {
 	}
 }
 
+// NewGolang will create a buildToolDetector
+// struct with the BuildToolType set
+// to Golang.
+func NewGolang() *app.GoaBuildToolDetector {
+	return &app.GoaBuildToolDetector{
+		BuildToolType: Golang,
+	}
+}
+
 // NewUnknown will create a buildToolDetector
 // struct with the BuildToolType set
 // to unknown.
@@ -73,13 +86,14 @@ func NewUnknown() *app.GoaBuildToolDetector {
 	}
 }
 
-// GetTypes returns the BuilType for all
+// GetTypes returns the BuildType for all
 // supported build tools.
 func GetTypes() []BuildType {
-	buildTypes := make([]BuildType, 2)
+	buildTypes := make([]BuildType, 3)
 
 	buildTypes[0] = getTypeMaven()
 	buildTypes[1] = getTypeNodeJS()
+	buildTypes[2] = getTypeGolang()
 
 	return buildTypes
 }
@@ -92,4 +106,9 @@ func getTypeMaven() BuildType {
 // getTypeNodeJS returns BuildType for nodejs.
 func getTypeNodeJS() BuildType {
 	return BuildType{NodeJS, packageJSON}
+}
+
+// getTypeGolang returns BuildType for golang.
+func getTypeGolang() BuildType {
+	return BuildType{Golang, mainFile}
 }

@@ -62,17 +62,14 @@ func Create(segment []string, branch *string, configuration config.Configuration
 	return newRepository(segment, branch, configuration, token)
 }
 
-// DetectBuildTool gets the contents for the service.
+// DetectBuildTool gets the contents for the service and returns the buildTool
+// type info. The buildTool type is set to Unknown in case of an error.
 func (g githubRepository) DetectBuildTool(ctx context.Context) (*string, error) {
-	// getGithubRepositoryPom returns an
-	// InternalServerError and will print
-	// the buildTool as unknown.
-	buildTool := types.Unknown
 	results := getContents(ctx, g)
 	if results.err != nil {
+		buildTool := types.Unknown
 		return &buildTool, results.err
 	}
-
 	return &results.typeInfo.BuildType, nil
 }
 
