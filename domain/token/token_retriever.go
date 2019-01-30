@@ -13,6 +13,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"time"
 
 	"github.com/fabric8-services/build-tool-detector/log"
 	client "github.com/fabric8-services/fabric8-auth-client/auth"
@@ -68,7 +69,11 @@ func GetGitHubToken(ctx *context.Context, authServiceURL string, u *url.URL) (*s
 	if err != nil {
 		return nil, errors.Wrap(err, "auth service url not found")
 	}
-	authClient := client.New(goaclient.HTTPClientDoer(http.DefaultClient))
+	defaultClient := http.DefaultClient
+	// The default client doesn't have a timeout. Explicitly set one so that we
+	// don't wait indefinitely
+	defaultClient.Timeout = 15 * time.Second
+	authClient := client.New(goaclient.HTTPClientDoer(defaultClient))
 	authClient.Host = url.Host
 	authClient.Scheme = url.Scheme
 	if goajwt.ContextJWT(*ctx) != nil {
