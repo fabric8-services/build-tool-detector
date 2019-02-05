@@ -8,6 +8,7 @@ SOURCE_DIR ?= .
 SOURCES := $(shell find $(SOURCE_DIR) -path $(SOURCE_DIR)/vendor -prune -o -name '*.go' -print)
 DESIGN_DIR=design
 DESIGNS := $(shell find $(SOURCE_DIR)/$(DESIGN_DIR) -path $(SOURCE_DIR)/vendor -prune -o -name '*.go' -print)
+GOBIN=$(INSTALL_PREFIX)
 
 # This pattern excludes the listed folders while running tests
 TEST_PKGS_EXCLUDE_PATTERN = "vendor|app|tool\/build-tool-detector-cli|design|client|test"
@@ -25,6 +26,7 @@ GIT_COMMITTER_NAME ?= "user"
 GIT_COMMITTER_EMAIL ?= "user@example.com"
 export GIT_COMMITTER_NAME
 export GIT_COMMITTER_EMAIL
+export GOBIN
 
 COMMIT=$(shell git rev-parse HEAD 2>/dev/null)
 GITUNTRACKEDCHANGES := $(shell git status --porcelain --untracked-files=no)
@@ -53,11 +55,7 @@ help: ## Prints this help
 # -------------------------------------------------------------------
 
 # Find all required tools:
-GIT_BIN := $(shell command -v $(GIT_BIN_NAME) 2> /dev/null)
-
-DEP_BIN_DIR := $(TMP_PATH)/bin
-DEP_BIN := $(DEP_BIN_DIR)/$(DEP_BIN_NAME)
-DEP_VERSION=v0.4.1
+GIT_BIN := $(shell command -v $(GIT_BIN_NAME) 3> /dev/null)
 
 GO_BIN := $(shell command -v $(GO_BIN_NAME) 2> /dev/null)
 
@@ -66,53 +64,20 @@ $(INSTALL_PREFIX):
 $(TMP_PATH):
 	mkdir -p $(TMP_PATH)
 
-# -------------------------------------------------------------------
-# deps
-# -------------------------------------------------------------------
-$(DEP_BIN_DIR):
-	mkdir -p $(DEP_BIN_DIR)
-
-
 .PHONY: test-deps
 test-deps: $(GINKGO_BIN)
 
 # install ginkgo cli
 $(GINKGO_BIN):
-	cd $(VENDOR_DIR)/github.com/onsi/ginkgo/ginkgo && go build -v
+	$(GO_BIN) install github.com/onsi/ginkgo/ginkgo
 	@chmod +x $(GINKGO_BIN)
-
-
-.PHONY: deps 
-deps: $(DEP_BIN) $(VENDOR_DIR) ## Download build dependencies.
-
-# install dep in a the tmp/bin dir of the repo
-$(DEP_BIN): $(DEP_BIN_DIR) 
-	@echo "Installing 'dep' $(DEP_VERSION) at '$(DEP_BIN_DIR)'..."
-	mkdir -p $(DEP_BIN_DIR)
-ifeq ($(UNAME_S),Darwin)
-	@curl -L -s https://github.com/golang/dep/releases/download/$(DEP_VERSION)/dep-darwin-amd64 -o $(DEP_BIN) 
-	@cd $(DEP_BIN_DIR) && \
-	curl -L -s https://github.com/golang/dep/releases/download/$(DEP_VERSION)/dep-darwin-amd64.sha256 -o $(DEP_BIN_DIR)/dep-darwin-amd64.sha256 && \
-	echo "1544afdd4d543574ef8eabed343d683f7211202a65380f8b32035d07ce0c45ef  dep" > dep-darwin-amd64.sha256 && \
-	shasum -a 256 --check dep-darwin-amd64.sha256
-else
-	@curl -L -s https://github.com/golang/dep/releases/download/$(DEP_VERSION)/dep-linux-amd64 -o $(DEP_BIN)
-	@cd $(DEP_BIN_DIR) && \
-	echo "31144e465e52ffbc0035248a10ddea61a09bf28b00784fd3fdd9882c8cbb2315  dep" > dep-linux-amd64.sha256 && \
-	sha256sum -c dep-linux-amd64.sha256
-endif
-	@chmod +x $(DEP_BIN)
-
-$(VENDOR_DIR): Gopkg.toml
-	@echo "checking dependencies with $(DEP_BIN_NAME)"
-	@$(DEP_BIN) ensure -v 
-		
 
 # -------------------------------------------------------------------
 # support for generating goa code
 # -------------------------------------------------------------------
-$(GOAGEN_BIN): $(VENDOR_DIR)
-	cd $(VENDOR_DIR)/github.com/goadesign/goa/goagen && go build -v
+$(GOAGEN_BIN):
+	@echo "Building goagen tool"
+	$(GO_BIN) install github.com/goadesign/goa/goagen
 
 # -------------------------------------------------------------------
 # clean
@@ -161,22 +126,23 @@ clean: $(CLEAN_TARGETS) ## Runs all clean-* targets.
 # -------------------------------------------------------------------
 LDFLAGS=-ldflags "-X ${PACKAGE_NAME}/app.Commit=${COMMIT} -X ${PACKAGE_NAME}/app.BuildTime=${BUILD_TIME}"
 
-$(SERVER_BIN): prebuild-check deps generate ## Build the server
+$(SERVER_BIN): ## Build the server
 	@echo "building $(SERVER_BIN)..."
-	go build -v $(LDFLAGS) -o $(SERVER_BIN)
+	$(GO_BIN) build -v $(LDFLAGS) -o $(SERVER_BIN)
 
 .PHONY: build
 build: $(SERVER_BIN) ## Build the server
 
 .PHONY: generate
-generate: prebuild-check $(DESIGNS) $(GOAGEN_BIN) $(VENDOR_DIR) ## Generate GOA sources. Only necessary after clean of if changed `design` folder.
+generate: prebuild-check $(DESIGNS) $(GOAGEN_BIN) ## Generate GOA sources. Only necessary after clean of if changed `design` folder.
+	@echo "Generating goa artifacts"
 	$(GOAGEN_BIN) app -d ${PACKAGE_NAME}/${DESIGN_DIR}
 	$(GOAGEN_BIN) controller -d ${PACKAGE_NAME}/${DESIGN_DIR} -o controllers/ --pkg controllers --app-pkg ${PACKAGE_NAME}/app
 	$(GOAGEN_BIN) gen -d ${PACKAGE_NAME}/${DESIGN_DIR} --pkg-path=github.com/fabric8-services/fabric8-common/goasupport/status --out app
 	$(GOAGEN_BIN) swagger -d ${PACKAGE_NAME}/${DESIGN_DIR}
 	
 .PHONY: test 
-test: test-deps  ## Executes all tests
+test: test-deps generate  ## Executes all tests
 	$(eval TEST_PACKAGES:=$(shell go list ./... | grep -v -E $(TEST_PKGS_EXCLUDE_PATTERN)))
 	go test -vet off $(TEST_PACKAGES) -v
 
@@ -192,24 +158,10 @@ show-info:
 	$(call log-info,"$(shell go env)")
 
 .PHONY: prebuild-check
-prebuild-check: $(TMP_PATH) $(INSTALL_PREFIX) $(CHECK_GOPATH_BIN) show-info
+prebuild-check: $(TMP_PATH) $(INSTALL_PREFIX) show-info
 # Check that all tools where found
 ifndef GIT_BIN
 	$(error The "$(GIT_BIN_NAME)" executable could not be found in your PATH)
-endif
-ifndef DEP_BIN
-	$(error The "$(DEP_BIN_NAME)" executable could not be found in your PATH)
-endif
-	@$(CHECK_GOPATH_BIN) -packageName=$(PACKAGE_NAME) || (echo "Project lives in wrong location"; exit 1)
-
-$(CHECK_GOPATH_BIN): .make/check_gopath.go
-ifndef GO_BIN
-	$(error The "$(GO_BIN_NAME)" executable could not be found in your PATH)
-endif
-ifeq ($(OS),Windows_NT)
-	@go build -o "$(shell cygpath --windows '$(CHECK_GOPATH_BIN)')" .make/check_gopath.go
-else
-	@go build -o $(CHECK_GOPATH_BIN) .make/check_gopath.go
 endif
 
 .PHONY: check-go-format
