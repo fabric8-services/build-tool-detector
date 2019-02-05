@@ -86,7 +86,6 @@ else
 		--name="$(DOCKER_CONTAINER_NAME)" \
 		-v $(CUR_DIR):$(PACKAGE_PATH):Z \
 		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
-		-e GOPATH=$(GOPATH_IN_CONTAINER) \
 		-w $(PACKAGE_PATH) \
 		$(DOCKER_IMAGE_CORE)
 		@echo "Docker container \"$(DOCKER_CONTAINER_NAME)\" created. Continue with \"make docker-deps\"."
