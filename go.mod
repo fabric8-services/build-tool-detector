@@ -30,6 +30,6 @@ require (
 	github.com/zach-klippenstein/goregen v0.0.0-20160303162051-795b5e3961ea // indirect
 	golang.org/x/oauth2 v0.0.0-20190130055435-99b60b757ec1
 	golang.org/x/tools v0.0.0-20190130214255-bb1329dc71a0 // indirect
-	gopkg.in/h2non/gock.v1 v1.0.13
+	gopkg.in/h2non/gock.v1 v1.0.12
 	gopkg.in/square/go-jose.v2 v2.2.2 // indirect
 )

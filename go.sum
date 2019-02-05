@@ -129,6 +129,8 @@ google.golang.org/appengine v1.4.0/go.mod h1:xpcJRLb0r/rnEns0DIKYYv+WjYCduHsrkT7
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/fsnotify.v1 v1.4.7 h1:xOHLXZwVvI9hhs+cLKq5+I5onOuwQLhQwiu63xxlHs4=
 gopkg.in/fsnotify.v1 v1.4.7/go.mod h1:Tz8NjZHkW78fSQdbUxIjBTcgA1z1m8ZHf0WmKUhAMys=
+gopkg.in/h2non/gock.v1 v1.0.12 h1:o3JJqe+h7R9Ay6LtMeFrKz1WnokrJDrNpDQs9KGqVn8=
+gopkg.in/h2non/gock.v1 v1.0.12/go.mod h1:KHI4Z1sxDW6P4N3DfTWSEza07YpkQP7KJBfglRMEjKY=
 gopkg.in/h2non/gock.v1 v1.0.13 h1:Y1RfpUpUwS+CPCGxOGEMUjPIj/h74i2dnXSyu4uqJGo=
 gopkg.in/h2non/gock.v1 v1.0.13/go.mod h1:KHI4Z1sxDW6P4N3DfTWSEza07YpkQP7KJBfglRMEjKY=
 gopkg.in/square/go-jose.v2 v2.2.2 h1:orlkJ3myw8CN1nVQHBFfloD+L3egixIa4FvUP6RosSA=
