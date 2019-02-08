@@ -5,7 +5,7 @@ Little service which will detect what build tool you are using.
 
 ==== Pre-requisites
 * link:https://golang.org/doc/install[Golang prerequisites] and `$GOPATH` setup.
-NOTE: Stick to Golang version 1.10 because of link:https://github.com/goadesign/goa/pull/1548[goa and golang 1.11]. Have a look how link:https://github.com/moovweb/gvm[Go Version Manager] can help you simplifying configuration and management of different versions of Go.
+NOTE: Stick to Golang version 1.11 because of link:https://github.com/goadesign/goa/pull/1548[goa and golang 1.11]. Have a look how link:https://github.com/moovweb/gvm[Go Version Manager] can help you simplifying configuration and management of different versions of Go.
 
 * clone the repo in your GOPATH:
 [source,bash]
