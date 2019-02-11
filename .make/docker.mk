@@ -71,9 +71,9 @@ clean-docker-build-dir:
 .PHONY: docker-start
 ## Starts the docker build container in the background (detached mode).
 ## After calling this command you can invoke all the make targets from the
-## normal Makefile (e.g. deps, generate, build) inside the build container
-## by prefixing them with "docker-". For example to execute "make deps"
-## inside the build container, just run "make docker-deps".
+## normal Makefile (e.g. generate, build) inside the build container
+## by prefixing them with "docker-". For example to execute "make build"
+## inside the build container, just run "make docker-build".
 ## To remove the container when no longer needed, call "make docker-rm".
 docker-start: docker-build-dir docker-image-builder
 ifneq ($(strip $(shell docker ps -qa --filter "name=$(DOCKER_CONTAINER_NAME)" 2>/dev/null)),)
@@ -88,7 +88,7 @@ else
 		-u $(shell id -u $(USER)):$(shell id -g $(USER)) \
 		-w $(PACKAGE_PATH) \
 		$(DOCKER_IMAGE_CORE)
-		@echo "Docker container \"$(DOCKER_CONTAINER_NAME)\" created. Continue with \"make docker-deps\"."
+		@echo "Docker container \"$(DOCKER_CONTAINER_NAME)\" created."
 endif
 
 .PHONY: docker-rm
