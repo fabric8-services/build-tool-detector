@@ -56,6 +56,9 @@ help: ## Prints this help
 
 # Find all required tools:
 GIT_BIN := $(shell command -v $(GIT_BIN_NAME) 3> /dev/null)
+DEP_BIN_DIR := $(TMP_PATH)/bin
+DEP_BIN := $(DEP_BIN_DIR)/$(DEP_BIN_NAME)
+DEP_VERSION=v0.4.1
 
 GO_BIN := $(shell command -v $(GO_BIN_NAME) 2> /dev/null)
 
@@ -63,6 +66,13 @@ $(INSTALL_PREFIX):
 	mkdir -p $(INSTALL_PREFIX)
 $(TMP_PATH):
 	mkdir -p $(TMP_PATH)
+
+# -------------------------------------------------------------------
+# deps
+# -------------------------------------------------------------------
+$(DEP_BIN_DIR):
+	mkdir -p $(DEP_BIN_DIR)
+
 
 .PHONY: test-deps
 test-deps: $(GINKGO_BIN)
@@ -81,7 +91,7 @@ endif
 deps: $(DEP_BIN) $(VENDOR_DIR) ## Download build dependencies.
 
 # install dep in a the tmp/bin dir of the repo
-$(DEP_BIN): $(DEP_BIN_DIR) 
+$(DEP_BIN): $(DEP_BIN_DIR)
 ifneq ($(GO111MODULE), on)
 	@echo "Installing 'dep' $(DEP_VERSION) at '$(DEP_BIN_DIR)'..."
 	mkdir -p $(DEP_BIN_DIR)
@@ -167,11 +177,11 @@ clean: $(CLEAN_TARGETS) ## Runs all clean-* targets.
 # -------------------------------------------------------------------
 LDFLAGS=-ldflags "-X ${PACKAGE_NAME}/app.Commit=${COMMIT} -X ${PACKAGE_NAME}/app.BuildTime=${BUILD_TIME}"
 
-$(SERVER_BIN): ## Build the server
+$(SERVER_BIN):prebuild-check deps generate ## Build the server
 	@echo "building $(SERVER_BIN)..."
 	$(GO_BIN) build -v $(LDFLAGS) -o $(SERVER_BIN)
 
-.PHONY: build
+.PHONY: build generate
 build: $(SERVER_BIN) ## Build the server
 
 .PHONY: generate
