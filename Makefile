@@ -69,15 +69,56 @@ test-deps: $(GINKGO_BIN)
 
 # install ginkgo cli
 $(GINKGO_BIN):
-	$(GO_BIN) install github.com/onsi/ginkgo/ginkgo
+ifneq ($(GO111MODULE), on)
+	cd $(VENDOR_DIR)/github.com/onsi/ginkgo/ginkgo && go install
 	@chmod +x $(GINKGO_BIN)
+else 
+	go install github.com/onsi/ginko/ginkgo
+endif
+
+
+.PHONY: deps 
+deps: $(DEP_BIN) $(VENDOR_DIR) ## Download build dependencies.
+
+# install dep in a the tmp/bin dir of the repo
+$(DEP_BIN): $(DEP_BIN_DIR) 
+ifneq ($(GO111MODULE), on)
+	@echo "Installing 'dep' $(DEP_VERSION) at '$(DEP_BIN_DIR)'..."
+	mkdir -p $(DEP_BIN_DIR)
+ifeq ($(UNAME_S),Darwin)
+	@curl -L -s https://github.com/golang/dep/releases/download/$(DEP_VERSION)/dep-darwin-amd64 -o $(DEP_BIN) 
+	@cd $(DEP_BIN_DIR) && \
+	curl -L -s https://github.com/golang/dep/releases/download/$(DEP_VERSION)/dep-darwin-amd64.sha256 -o $(DEP_BIN_DIR)/dep-darwin-amd64.sha256 && \
+	echo "1544afdd4d543574ef8eabed343d683f7211202a65380f8b32035d07ce0c45ef  dep" > dep-darwin-amd64.sha256 && \
+	shasum -a 256 --check dep-darwin-amd64.sha256
+else
+	@curl -L -s https://github.com/golang/dep/releases/download/$(DEP_VERSION)/dep-linux-amd64 -o $(DEP_BIN)
+	@cd $(DEP_BIN_DIR) && \
+	echo "31144e465e52ffbc0035248a10ddea61a09bf28b00784fd3fdd9882c8cbb2315  dep" > dep-linux-amd64.sha256 && \
+	sha256sum -c dep-linux-amd64.sha256
+endif
+	@chmod +x $(DEP_BIN)
+else 
+	@echo "Using go module to download dependencies.."
+endif
+
+$(VENDOR_DIR): Gopkg.toml
+ifneq ($(GO111MODULE), on)
+	@echo "checking dependencies with $(DEP_BIN_NAME)"
+	@$(DEP_BIN) ensure -v
+else 
+	@echo "Downloading deps with go module"
+endif
 
 # -------------------------------------------------------------------
 # support for generating goa code
 # -------------------------------------------------------------------
-$(GOAGEN_BIN):
-	@echo "Building goagen tool"
-	$(GO_BIN) install github.com/goadesign/goa/goagen
+$(GOAGEN_BIN): $(VENDOR_DIR)
+ifneq ($(GO111MODULE), on)
+	cd $(VENDOR_DIR)/github.com/goadesign/goa/goagen && go install
+else
+	go install github.com/goadesign/goa/goagen
+endif
 
 # -------------------------------------------------------------------
 # clean
